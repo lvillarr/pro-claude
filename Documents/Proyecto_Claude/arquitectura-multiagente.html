@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitectura Multiagente — Mejora Continua Arauco</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #111318;
+    --bg3: #181b22;
+    --border: rgba(255,255,255,0.07);
+    --border-hi: rgba(255,255,255,0.15);
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --dim: #3d4150;
+
+    --purple: #a78bfa;
+    --purple-bg: rgba(167,139,250,0.10);
+    --purple-border: rgba(167,139,250,0.25);
+
+    --teal: #2dd4bf;
+    --teal-bg: rgba(45,212,191,0.08);
+    --teal-border: rgba(45,212,191,0.22);
+
+    --blue: #60a5fa;
+    --blue-bg: rgba(96,165,250,0.08);
+    --blue-border: rgba(96,165,250,0.22);
+
+    --amber: #fbbf24;
+    --amber-bg: rgba(251,191,36,0.08);
+    --amber-border: rgba(251,191,36,0.20);
+
+    --green: #4ade80;
+    --green-bg: rgba(74,222,128,0.07);
+    --green-border: rgba(74,222,128,0.20);
+
+    --coral: #f87171;
+    --coral-bg: rgba(248,113,113,0.08);
+    --coral-border: rgba(248,113,113,0.20);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 32px 24px 64px;
+  }
+
+  /* ── header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1.15;
+  }
+  .header h1 span { color: var(--purple); }
+  .header-sub {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── tabs ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 36px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .tab {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .tab.active {
+    background: var(--bg3);
+    color: var(--text);
+    border: 1px solid var(--border-hi);
+  }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* ── views ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── grid layout ── */
+  .arch-grid {
+    display: grid;
+    gap: 16px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── layer label ── */
+  .layer-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 8px;
+    padding-left: 2px;
+  }
+
+  /* ── ORCHESTRATOR card ── */
+  .orch-card {
+    background: var(--bg2);
+    border: 1px solid var(--purple-border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .orch-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--purple-bg);
+    pointer-events: none;
+  }
+  .orch-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--purple);
+    background: rgba(167,139,250,0.12);
+    border: 1px solid var(--purple-border);
+    border-radius: 99px;
+    padding: 3px 10px;
+    margin-bottom: 10px;
+  }
+  .orch-badge::before { content: '◆'; font-size: 8px; }
+  .orch-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .orch-desc {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 20px;
+  }
+  .orch-responsibilities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .resp-pill {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--purple);
+    background: rgba(167,139,250,0.08);
+    border: 1px solid rgba(167,139,250,0.18);
+    border-radius: 6px;
+    padding: 4px 10px;
+  }
+
+  /* ── connector row ── */
+  .connector-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 2px 0;
+  }
+  .conn-line {
+    width: 2px;
+    height: 28px;
+    background: linear-gradient(to bottom, var(--purple-border), var(--border));
+    margin: 0 auto;
+  }
+  .conn-h-container {
+    position: relative;
+    height: 32px;
+    display: flex;
+    align-items: center;
+  }
+  .conn-h-line {
+    position: absolute;
+    top: 50%;
+    left: 16.5%;
+    right: 16.5%;
+    height: 1px;
+    background: var(--border);
+  }
+  .conn-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--dim);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .conn-dot.left { left: 16%; }
+  .conn-dot.center { left: 50%; transform: translate(-50%, -50%); }
+  .conn-dot.right { right: 16%; }
+
+  /* ── agents row ── */
+  .agents-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  /* ── agent card ── */
+  .agent-card {
+    background: var(--bg2);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .agent-card:hover { transform: translateY(-2px); }
+  .agent-card.ia { border-color: var(--teal-border); }
+  .agent-card.td { border-color: var(--blue-border); }
+  .agent-card.eo { border-color: var(--amber-border); }
+
+  .agent-header {
+    padding: 16px 18px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .agent-header.ia { background: var(--teal-bg); }
+  .agent-header.td { background: var(--blue-bg); }
+  .agent-header.eo { background: var(--amber-bg); }
+
+  .agent-icon {
+    font-size: 22px;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .agent-name {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+  .agent-name.ia { color: var(--teal); }
+  .agent-name.td { color: var(--blue); }
+  .agent-name.eo { color: var(--amber); }
+  .agent-role {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+  }
+
+  .agent-body { padding: 14px 18px; }
+
+  .section-micro {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 6px;
+    margin-top: 12px;
+  }
+  .section-micro:first-child { margin-top: 0; }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .tag {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    border-radius: 4px;
+    padding: 3px 7px;
+    border: 1px solid transparent;
+  }
+  .tag.ia { color: var(--teal); background: var(--teal-bg); border-color: var(--teal-border); }
+  .tag.td { color: var(--blue); background: var(--blue-bg); border-color: var(--blue-border); }
+  .tag.eo { color: var(--amber); background: var(--amber-bg); border-color: var(--amber-border); }
+  .tag.tool { color: var(--green); background: var(--green-bg); border-color: var(--green-border); }
+  .tag.mcp  { color: var(--coral); background: var(--coral-bg); border-color: var(--coral-border); }
+  .tag.skill { color: var(--purple); background: var(--purple-bg); border-color: var(--purple-border); }
+  .tag.shared { color: var(--muted); background: rgba(255,255,255,0.04); border-color: var(--border-hi); }
+
+  /* ── shared layer ── */
+  .shared-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .shared-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .shared-card.tools { border-color: var(--green-border); background: var(--green-bg); }
+  .shared-card.skills { border-color: var(--purple-border); background: var(--purple-bg); }
+  .shared-card.mcp   { border-color: var(--coral-border); background: var(--coral-bg); }
+  .shared-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .shared-card-title.tools { color: var(--green); }
+  .shared-card-title.skills { color: var(--purple); }
+  .shared-card-title.mcp   { color: var(--coral); }
+  .shared-card-title .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor; flex-shrink: 0;
+  }
+
+  .item-list { display: flex; flex-direction: column; gap: 5px; }
+  .item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+  }
+  .item-row .name { color: var(--text); font-weight: 500; flex-shrink: 0; }
+  .item-row .desc { color: var(--muted); font-size: 10px; }
+
+  /* ── detail panel (tab 2+) ── */
+  .detail-grid {
+    display: grid;
+    gap: 16px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .detail-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .detail-section-sub {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .tool-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: border-color 0.18s;
+  }
+  .tool-card:hover { border-color: var(--border-hi); }
+  .tool-card-name {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tool-card-desc {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .tool-card-agents {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .agent-badge {
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .agent-badge.ia { color: var(--teal); background: var(--teal-bg); }
+  .agent-badge.td { color: var(--blue); background: var(--blue-bg); }
+  .agent-badge.eo { color: var(--amber); background: var(--amber-bg); }
+  .agent-badge.all { color: var(--muted); background: rgba(255,255,255,0.05); }
+
+  /* ── flow diagram ── */
+  .flow-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .flow-step {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .flow-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 1px solid var(--border-hi);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--purple);
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    margin-top: 4px;
+  }
+  .flow-content {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .flow-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .flow-desc {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .flow-connector {
+    margin-left: 18px;
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+    margin-bottom: 8px;
+  }
+
+  /* ── CLAUDE.md section ── */
+  .code-block {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    overflow-x: auto;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .code-block .c-comment { color: var(--muted); }
+  .code-block .c-key { color: var(--purple); }
+  .code-block .c-val { color: var(--teal); }
+  .code-block .c-head { color: var(--amber); font-weight: 500; }
+
+  @media (max-width: 700px) {
+    .agents-row, .shared-grid { grid-template-columns: 1fr; }
+    .tabs { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Claude Code · Sistema Multiagente</div>
+  <h1>Arquitectura de <span>Mejora Continua</span></h1>
+  <div class="header-sub">Arauco · Subgerencia MC · Skills + Tools + MCP</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showView('overview')">Arquitectura</button>
+  <button class="tab" onclick="showView('tools')">Tools</button>
+  <button class="tab" onclick="showView('skills')">Skills</button>
+  <button class="tab" onclick="showView('mcp')">MCP Servers</button>
+  <button class="tab" onclick="showView('flow')">Flujo operacional</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     VIEW 1 — ARQUITECTURA OVERVIEW
+═══════════════════════════════════════════ -->
+<div class="view active" id="view-overview">
+  <div class="arch-grid">
+
+    <!-- Orchestrator -->
+    <div>
+      <div class="layer-label">Capa 1 · Orquestador</div>
+      <div class="orch-card">
+        <div class="orch-badge">Orchestrator Agent</div>
+        <div class="orch-title">Subgerente de Mejora Continua</div>
+        <div class="orch-desc">claude --model claude-opus-4-5 · CLAUDE.md /orquestador</div>
+        <div class="orch-responsibilities">
+          <span class="resp-pill">Descompone objetivos</span>
+          <span class="resp-pill">Delega tareas</span>
+          <span class="resp-pill">Consolida resultados</span>
+          <span class="resp-pill">Gestiona contexto</span>
+          <span class="resp-pill">Genera entregables ejecutivos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connector -->
+    <div style="padding: 0 10%">
+      <div style="position:relative; height:40px;">
+        <div style="position:absolute; top:50%; left:16%; right:16%; height:1px; background:var(--border);"></div>
+        <div style="position:absolute; top:50%; left:16%; width:1px; height:40px; transform:translateY(-50%); background:linear-gradient(to bottom, var(--border), transparent);"></div>
+        <div style="position:absolute; top:50%; left:50%; width:1px; height:40px; transform:translate(-50%,-50%); background:linear-gradient(to bottom, var(--border), transparent);"></div>
+        <div style="position:absolute; top:50%; right:16%; width:1px; height:40px; transform:translateY(-50%); background:linear-gradient(to bottom, var(--border), transparent);"></div>
+      </div>
+    </div>
+
+    <!-- Agents -->
+    <div>
+      <div class="layer-label">Capa 2 · Agentes especializados</div>
+      <div class="agents-row">
+
+        <!-- IA -->
+        <div class="agent-card ia">
+          <div class="agent-header ia">
+            <span class="agent-icon">🧠</span>
+            <div class="agent-name ia">Área IA</div>
+            <div class="agent-role">Inteligencia Artificial</div>
+          </div>
+          <div class="agent-body">
+            <div class="section-micro">Skills</div>
+            <div class="tag-list">
+              <span class="tag skill">data-analysis</span>
+              <span class="tag skill">ml-modeling</span>
+              <span class="tag skill">dashboard-html</span>
+              <span class="tag skill">llm-integration</span>
+            </div>
+            <div class="section-micro">Tools</div>
+            <div class="tag-list">
+              <span class="tag tool">python-exec</span>
+              <span class="tag tool">read-file</span>
+              <span class="tag tool">write-file</span>
+              <span class="tag tool">bash</span>
+            </div>
+            <div class="section-micro">MCP</div>
+            <div class="tag-list">
+              <span class="tag mcp">filesystem</span>
+              <span class="tag mcp">sqlite</span>
+              <span class="tag mcp">fetch</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TD -->
+        <div class="agent-card td">
+          <div class="agent-header td">
+            <span class="agent-icon">⚡</span>
+            <div class="agent-name td">Área TD</div>
+            <div class="agent-role">Transformación Digital</div>
+          </div>
+          <div class="agent-body">
+            <div class="section-micro">Skills</div>
+            <div class="tag-list">
+              <span class="tag skill">api-integration</span>
+              <span class="tag skill">etl-pipeline</span>
+              <span class="tag skill">automation</span>
+              <span class="tag skill">telemetry</span>
+            </div>
+            <div class="section-micro">Tools</div>
+            <div class="tag-list">
+              <span class="tag tool">bash</span>
+              <span class="tag tool">write-file</span>
+              <span class="tag tool">read-file</span>
+              <span class="tag tool">web-fetch</span>
+            </div>
+            <div class="section-micro">MCP</div>
+            <div class="tag-list">
+              <span class="tag mcp">filesystem</span>
+              <span class="tag mcp">git</span>
+              <span class="tag mcp">postgres</span>
+              <span class="tag mcp">fetch</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- EO -->
+        <div class="agent-card eo">
+          <div class="agent-header eo">
+            <span class="agent-icon">📊</span>
+            <div class="agent-name eo">Área EO</div>
+            <div class="agent-role">Excelencia Operacional</div>
+          </div>
+          <div class="agent-body">
+            <div class="section-micro">Skills</div>
+            <div class="tag-list">
+              <span class="tag skill">lean-management</span>
+              <span class="tag skill">kpi-design</span>
+              <span class="tag skill">process-mapping</span>
+              <span class="tag skill">risk-iso31000</span>
+            </div>
+            <div class="section-micro">Tools</div>
+            <div class="tag-list">
+              <span class="tag tool">read-file</span>
+              <span class="tag tool">write-file</span>
+              <span class="tag tool">bash</span>
+              <span class="tag tool">python-exec</span>
+            </div>
+            <div class="section-micro">MCP</div>
+            <div class="tag-list">
+              <span class="tag mcp">filesystem</span>
+              <span class="tag mcp">excel-mcp</span>
+              <span class="tag mcp">sqlite</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end agents-row -->
+    </div>
+
+    <!-- Shared layer -->
+    <div>
+      <div class="layer-label">Capa 3 · Infraestructura compartida</div>
+      <div class="shared-grid">
+
+        <div class="shared-card tools">
+          <div class="shared-card-title tools"><span class="dot"></span>Built-in Tools</div>
+          <div class="item-list">
+            <div class="item-row"><span class="name">bash</span><span class="desc">Ejecuta comandos shell</span></div>
+            <div class="item-row"><span class="name">read_file</span><span class="desc">Lee archivos del proyecto</span></div>
+            <div class="item-row"><span class="name">write_file</span><span class="desc">Crea / modifica archivos</span></div>
+            <div class="item-row"><span class="name">python</span><span class="desc">Ejecuta scripts Python</span></div>
+            <div class="item-row"><span class="name">web_fetch</span><span class="desc">Consulta URLs / APIs externas</span></div>
+            <div class="item-row"><span class="name">task</span><span class="desc">Lanza subagentes en paralelo</span></div>
+          </div>
+        </div>
+
+        <div class="shared-card skills">
+          <div class="shared-card-title skills"><span class="dot"></span>Custom Skills</div>
+          <div class="item-list">
+            <div class="item-row"><span class="name">arauco-context</span><span class="desc">Glosario y convenciones MC</span></div>
+            <div class="item-row"><span class="name">lean-templates</span><span class="desc">Plantillas A3, VSM, KPI</span></div>
+            <div class="item-row"><span class="name">chart-generator</span><span class="desc">Genera HTML Chart.js desde CSV</span></div>
+            <div class="item-row"><span class="name">docx-report</span><span class="desc">Genera informes Word formateados</span></div>
+            <div class="item-row"><span class="name">on-off-parser</span><span class="desc">Parsea registros de maquinaria</span></div>
+            <div class="item-row"><span class="name">risk-matrix</span><span class="desc">ISO 31000 / COSO ERM</span></div>
+          </div>
+        </div>
+
+        <div class="shared-card mcp">
+          <div class="shared-card-title mcp"><span class="dot"></span>MCP Servers</div>
+          <div class="item-list">
+            <div class="item-row"><span class="name">filesystem</span><span class="desc">Acceso a datos/ y rutas locales</span></div>
+            <div class="item-row"><span class="name">sqlite</span><span class="desc">BD local para históricos</span></div>
+            <div class="item-row"><span class="name">postgres</span><span class="desc">BD corporativa Arauco</span></div>
+            <div class="item-row"><span class="name">git</span><span class="desc">Control de versiones scripts</span></div>
+            <div class="item-row"><span class="name">excel-mcp</span><span class="desc">Lee/escribe .xlsx nativamente</span></div>
+            <div class="item-row"><span class="name">fetch</span><span class="desc">APIs SGL, ERP, telemetría GPS</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Data layer -->
+    <div>
+      <div class="layer-label">Capa 4 · Datos compartidos</div>
+      <div class="shared-card" style="border-color:var(--border-hi);">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+          <span class="tag shared">datos/*.csv</span>
+          <span class="tag shared">datos/*.xlsx</span>
+          <span class="tag shared">datos/*.html</span>
+          <span class="tag shared">datos/*.docx</span>
+          <span class="tag shared">datos/scripts/*.py</span>
+          <span class="tag shared">datos/docs/*.md</span>
+          <span class="tag shared">datos/plantillas/</span>
+          <span style="font-size:11px; font-family:'DM Mono',monospace; color:var(--muted); margin-left:4px;">
+            Convención: YYYY-MM-DD_[tipo]-[descripcion].[ext]
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end arch-grid -->
+</div>
+
+<!-- ═══════════════════════════════════════════
+     VIEW 2 — TOOLS
+═══════════════════════════════════════════ -->
+<div class="view" id="view-tools">
+  <div class="detail-grid">
+    <div>
+      <div class="detail-section-title">Built-in Tools de Claude Code</div>
+      <div class="detail-section-sub">Herramientas nativas disponibles para todos los agentes · configuradas en CLAUDE.md</div>
+    </div>
+
+    <div class="tool-grid">
+
+      <div class="tool-card">
+        <div class="tool-card-name" style="color:var(--green)">⬛ bash</div>
+        <div class="tool-card-desc">Ejecuta comandos shell: scripts Python, cron, pipes. Acceso total al sistema de archivos y procesos.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge all">todos los agentes</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-name" style="color:var(--green)">📄 read_file</div>
+        <div class="tool-card-desc">Lee archivos del proyecto: CSV, Excel, Markdown, JSON, código. Soporta rangos de línea para archivos grandes.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge all">todos los agentes</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-name" style="color:var(--green)">✏️ write_file</div>
+        <div class="tool-card-desc">Crea o sobreescribe archivos. Genera dashboards HTML, scripts Python, informes Markdown y plantillas.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge all">todos los agentes</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-name" style="color:var(--green)">🔧 str_replace</div>
+        <div class="tool-card-desc">Edita bloques específicos de archivos existentes. Ideal para actualizar KPIs en plantillas o ajustar scripts.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge ia">IA</span>
+          <span class="agent-badge td">TD</span>
+          <span class="agent-badge eo">EO</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-name" style="color:var(--green)">🌐 web_fetch</div>
+        <div class="tool-card-desc">Consulta APIs REST externas: SGL, ERP SAP, telemetría GPS, endpoints de datos en tiempo real.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge td">TD</span>
+          <span class="agent-badge ia">IA</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-name" style="color:var(--green)">🗂️ list_dir</div>
+        <div class="tool-card-desc">Lista contenido de directorios. El orquestador lo usa para descubrir archivos disponibles antes de delegar.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge all">orquestador + todos</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-name" style="color:var(--green)">🔍 grep_search</div>
+        <div class="tool-card-desc">Búsqueda en código y archivos de texto. Útil para encontrar patrones en logs operacionales o scripts.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge ia">IA</span>
+          <span class="agent-badge td">TD</span>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-name" style="color:var(--green)">🤖 task (subagent)</div>
+        <div class="tool-card-desc">Lanza subagentes en paralelo o en serie. El orquestador delega tareas atómicas a IA, TD y EO simultáneamente.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge all">solo orquestador</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     VIEW 3 — SKILLS
+═══════════════════════════════════════════ -->
+<div class="view" id="view-skills">
+  <div class="detail-grid">
+    <div>
+      <div class="detail-section-title">Custom Skills — CLAUDE.md por agente</div>
+      <div class="detail-section-sub">Capacidades especializadas declaradas en cada CLAUDE.md · activan comportamientos y contexto específico</div>
+    </div>
+
+    <div class="tool-grid">
+
+      <div class="tool-card" style="border-color:var(--teal-border)">
+        <div class="tool-card-name" style="color:var(--teal)">data-analysis</div>
+        <div class="tool-card-desc">Procesa CSV/Excel de operaciones forestales. Estadísticas, correlaciones, análisis ON/OFF de maquinaria (SKG, FEL, CLA).</div>
+        <div class="tool-card-agents"><span class="agent-badge ia">IA</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--teal-border)">
+        <div class="tool-card-name" style="color:var(--teal)">ml-modeling</div>
+        <div class="tool-card-desc">Modelos predictivos con scikit-learn: clasificación de fallas, series temporales de disponibilidad, clustering de comportamientos.</div>
+        <div class="tool-card-agents"><span class="agent-badge ia">IA</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--teal-border)">
+        <div class="tool-card-name" style="color:var(--teal)">dashboard-html</div>
+        <div class="tool-card-desc">Genera dashboards HTML autocontenidos con Chart.js. Paleta Arauco, filtros, tablas de ranking con semáforo visual.</div>
+        <div class="tool-card-agents"><span class="agent-badge ia">IA</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--teal-border)">
+        <div class="tool-card-name" style="color:var(--teal)">llm-integration</div>
+        <div class="tool-card-desc">Integra Claude API en pipelines internos. Análisis automático de reportes, prompt engineering, evaluación de modelos.</div>
+        <div class="tool-card-agents"><span class="agent-badge ia">IA</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--blue-border)">
+        <div class="tool-card-name" style="color:var(--blue)">api-integration</div>
+        <div class="tool-card-desc">Diseño y consumo de APIs REST. Conecta SGL, ERP SAP, GPS forestal y CMMS. Documenta con OpenAPI 3.0.</div>
+        <div class="tool-card-agents"><span class="agent-badge td">TD</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--blue-border)">
+        <div class="tool-card-name" style="color:var(--blue)">etl-pipeline</div>
+        <div class="tool-card-desc">Construye pipelines ETL entre fuentes heterogéneas. Transforma datos de campo para consumo en SGL y Power BI.</div>
+        <div class="tool-card-agents"><span class="agent-badge td">TD</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--blue-border)">
+        <div class="tool-card-name" style="color:var(--blue)">automation</div>
+        <div class="tool-card-desc">Scripts de automatización con schedule/cron. Genera reportes periódicos, sincroniza datos, notifica por correo/Teams.</div>
+        <div class="tool-card-agents"><span class="agent-badge td">TD</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--blue-border)">
+        <div class="tool-card-name" style="color:var(--blue)">telemetry</div>
+        <div class="tool-card-desc">Captura datos de maquinaria forestal (CAN bus, GPS, sensores). Protocolos MQTT/REST. Alertas por umbral operacional.</div>
+        <div class="tool-card-agents"><span class="agent-badge td">TD</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--amber-border)">
+        <div class="tool-card-name" style="color:var(--amber)">lean-management</div>
+        <div class="tool-card-desc">Aplica herramientas Lean: 5S, Kaizen, A3, SMED, Poka-Yoke en contexto forestal. Gestiona rutinas SGL y cascada de objetivos.</div>
+        <div class="tool-card-agents"><span class="agent-badge eo">EO</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--amber-border)">
+        <div class="tool-card-name" style="color:var(--amber)">kpi-design</div>
+        <div class="tool-card-desc">Diseña fichas de indicador completas: fórmula, fuente, meta, umbral, responsable. Calcula OEE forestal y brechas.</div>
+        <div class="tool-card-agents"><span class="agent-badge eo">EO</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--amber-border)">
+        <div class="tool-card-name" style="color:var(--amber)">process-mapping</div>
+        <div class="tool-card-desc">Levanta procesos AS-IS y diseña TO-BE. Genera Value Stream Maps, identifica pérdidas y cuantifica impacto (horas, m³, $).</div>
+        <div class="tool-card-agents"><span class="agent-badge eo">EO</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--amber-border)">
+        <div class="tool-card-name" style="color:var(--amber)">risk-iso31000</div>
+        <div class="tool-card-desc">Construye matrices de riesgo operacional bajo ISO 31000 / COSO ERM. Planes de mitigación y controles por proceso.</div>
+        <div class="tool-card-agents"><span class="agent-badge eo">EO</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--purple-border)">
+        <div class="tool-card-name" style="color:var(--purple)">arauco-context</div>
+        <div class="tool-card-desc">Glosario corporativo, convenciones de archivos, sistemas de referencia (SGL, ERP), terminología forestal. Compartido por todos.</div>
+        <div class="tool-card-agents"><span class="agent-badge all">todos los agentes</span></div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--purple-border)">
+        <div class="tool-card-name" style="color:var(--purple)">docx-report</div>
+        <div class="tool-card-desc">Genera informes Word con portada, índice, gráficos embebidos y formato corporativo Arauco usando python-docx.</div>
+        <div class="tool-card-agents"><span class="agent-badge ia">IA</span><span class="agent-badge eo">EO</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     VIEW 4 — MCP SERVERS
+═══════════════════════════════════════════ -->
+<div class="view" id="view-mcp">
+  <div class="detail-grid">
+    <div>
+      <div class="detail-section-title">MCP Servers — Model Context Protocol</div>
+      <div class="detail-section-sub">Servidores configurados en claude_desktop_config.json o .claude/settings.json del proyecto</div>
+    </div>
+
+    <div class="tool-grid">
+
+      <div class="tool-card" style="border-color:var(--coral-border)">
+        <div class="tool-card-name" style="color:var(--coral)">📁 filesystem</div>
+        <div class="tool-card-desc">Acceso seguro al directorio mejora-continua/. Lee, lista y escribe archivos dentro del scope definido. Reemplaza manejo manual de paths.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge all">todos los agentes</span>
+        </div>
+        <div style="margin-top:10px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);">
+          npx @modelcontextprotocol/server-filesystem
+        </div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--coral-border)">
+        <div class="tool-card-name" style="color:var(--coral)">🗃️ sqlite</div>
+        <div class="tool-card-desc">Base de datos local para históricos de KPIs, registros ON/OFF procesados y caché de resultados analíticos. Sin dependencia de red.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge ia">IA</span>
+          <span class="agent-badge eo">EO</span>
+        </div>
+        <div style="margin-top:10px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);">
+          npx @modelcontextprotocol/server-sqlite
+        </div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--coral-border)">
+        <div class="tool-card-name" style="color:var(--coral)">🐘 postgres</div>
+        <div class="tool-card-desc">Conexión a BD corporativa Arauco. Consulta tablas de operaciones, mantenimiento y costos directamente desde el agente TD.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge td">TD</span>
+        </div>
+        <div style="margin-top:10px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);">
+          npx @modelcontextprotocol/server-postgres
+        </div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--coral-border)">
+        <div class="tool-card-name" style="color:var(--coral)">📦 git</div>
+        <div class="tool-card-desc">Versionamiento de scripts, CLAUDE.md y entregables. Commit, diff, log y branch desde el agente TD sin salir del contexto.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge td">TD</span>
+        </div>
+        <div style="margin-top:10px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);">
+          npx @modelcontextprotocol/server-git
+        </div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--coral-border)">
+        <div class="tool-card-name" style="color:var(--coral)">📊 excel-mcp</div>
+        <div class="tool-card-desc">Lee y escribe archivos .xlsx nativamente sin convertir a CSV. Preserva formatos, fórmulas y múltiples hojas. Clave para EO.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge eo">EO</span>
+          <span class="agent-badge ia">IA</span>
+        </div>
+        <div style="margin-top:10px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);">
+          npx @modelcontextprotocol/server-excel
+        </div>
+      </div>
+
+      <div class="tool-card" style="border-color:var(--coral-border)">
+        <div class="tool-card-name" style="color:var(--coral)">🌐 fetch</div>
+        <div class="tool-card-desc">Consulta APIs externas: SGL REST API, ERP SAP RFC/SOAP, GPS forestal, CMMS. Autenticación configurable por header.</div>
+        <div class="tool-card-agents">
+          <span class="agent-badge td">TD</span>
+          <span class="agent-badge ia">IA</span>
+        </div>
+        <div style="margin-top:10px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);">
+          npx @modelcontextprotocol/server-fetch
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Config snippet -->
+    <div>
+      <div class="layer-label" style="margin-bottom:12px;">Configuración — .claude/settings.json del proyecto</div>
+      <div class="code-block"><span class="c-comment">// .claude/settings.json (raíz del proyecto)</span>
+{
+  <span class="c-key">"mcpServers"</span>: {
+    <span class="c-key">"filesystem"</span>: {
+      <span class="c-key">"command"</span>: <span class="c-val">"npx"</span>,
+      <span class="c-key">"args"</span>: [<span class="c-val">"-y"</span>, <span class="c-val">"@modelcontextprotocol/server-filesystem"</span>,
+               <span class="c-val">"./datos"</span>, <span class="c-val">"./agentes"</span>]
+    },
+    <span class="c-key">"sqlite"</span>: {
+      <span class="c-key">"command"</span>: <span class="c-val">"npx"</span>,
+      <span class="c-key">"args"</span>: [<span class="c-val">"-y"</span>, <span class="c-val">"@modelcontextprotocol/server-sqlite"</span>,
+               <span class="c-val">"./datos/arauco_mc.db"</span>]
+    },
+    <span class="c-key">"git"</span>: {
+      <span class="c-key">"command"</span>: <span class="c-val">"npx"</span>,
+      <span class="c-key">"args"</span>: [<span class="c-val">"-y"</span>, <span class="c-val">"@modelcontextprotocol/server-git"</span>,
+               <span class="c-val">"--repository"</span>, <span class="c-val">"."</span>]
+    },
+    <span class="c-key">"fetch"</span>: {
+      <span class="c-key">"command"</span>: <span class="c-val">"npx"</span>,
+      <span class="c-key">"args"</span>: [<span class="c-val">"-y"</span>, <span class="c-val">"@modelcontextprotocol/server-fetch"</span>]
+    }
+  }
+}</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     VIEW 5 — FLUJO OPERACIONAL
+═══════════════════════════════════════════ -->
+<div class="view" id="view-flow">
+  <div class="flow-container">
+    <div style="margin-bottom:24px;">
+      <div class="detail-section-title">Flujo: Informe semanal operacional</div>
+      <div class="detail-section-sub">Ejemplo end-to-end · orquestador delega en paralelo a IA y EO, luego consolida con TD</div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-content">
+        <div class="flow-title" style="color:var(--purple)">Usuario → Orquestador</div>
+        <div class="flow-desc">El usuario lanza: <code style="color:var(--teal)">claude "genera el informe semanal operacional semana 18"</code> desde /orquestador</div>
+        <div class="tag-list">
+          <span class="tag skill">arauco-context</span>
+          <span class="tag tool">list_dir</span>
+          <span class="tag tool">read_file</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-connector"></div>
+
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-content">
+        <div class="flow-title" style="color:var(--purple)">Orquestador analiza insumos</div>
+        <div class="flow-desc">Lista datos/ para descubrir archivos disponibles. Identifica qué agentes necesita y si hay dependencias entre tareas.</div>
+        <div class="tag-list">
+          <span class="tag tool">list_dir</span>
+          <span class="tag tool">read_file</span>
+          <span class="tag tool">task</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-connector"></div>
+
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-content">
+        <div class="flow-title" style="color:var(--teal)">Agente IA — Análisis ON/OFF</div>
+        <div class="flow-desc">Procesa registros de maquinaria. Calcula disponibilidad, utilización, patrones de parada y genera gráficos Chart.js.</div>
+        <div class="tag-list">
+          <span class="tag skill">data-analysis</span>
+          <span class="tag skill">dashboard-html</span>
+          <span class="tag tool">bash</span>
+          <span class="tag mcp">sqlite</span>
+          <span class="tag mcp">filesystem</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-connector"></div>
+
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-content">
+        <div class="flow-title" style="color:var(--amber)">Agente EO — KPIs y pérdidas</div>
+        <div class="flow-desc">Extrae KPIs del período, calcula OEE, genera pareto de pérdidas y compara vs. semana anterior y meta SGL.</div>
+        <div class="tag-list">
+          <span class="tag skill">kpi-design</span>
+          <span class="tag skill">lean-management</span>
+          <span class="tag tool">python-exec</span>
+          <span class="tag mcp">excel-mcp</span>
+          <span class="tag mcp">sqlite</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-connector"></div>
+
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-content">
+        <div class="flow-title" style="color:var(--blue)">Agente TD — Sincronización SGL</div>
+        <div class="flow-desc">Verifica que los datos del informe estén sincronizados con SGL. Si hay desvíos, los registra y genera alerta.</div>
+        <div class="tag-list">
+          <span class="tag skill">api-integration</span>
+          <span class="tag tool">web_fetch</span>
+          <span class="tag mcp">fetch</span>
+          <span class="tag mcp">git</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-connector"></div>
+
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div class="flow-content">
+        <div class="flow-title" style="color:var(--purple)">Orquestador consolida</div>
+        <div class="flow-desc">Integra outputs de IA + EO + TD. Genera informe ejecutivo .docx con portada, KPIs semáforo y próximos pasos.</div>
+        <div class="tag-list">
+          <span class="tag skill">docx-report</span>
+          <span class="tag skill">arauco-context</span>
+          <span class="tag tool">write_file</span>
+          <span class="tag mcp">filesystem</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-connector"></div>
+
+    <div class="flow-step">
+      <div class="flow-num">7</div>
+      <div class="flow-content">
+        <div class="flow-title" style="color:var(--green)">Entregable final</div>
+        <div class="flow-desc">Se genera en datos/ el archivo <code style="color:var(--teal)">2025-XX-XX_informe-semanal-s18.docx</code> + dashboard HTML + commit en Git.</div>
+        <div class="tag-list">
+          <span class="tag shared">datos/*.docx</span>
+          <span class="tag shared">datos/*.html</span>
+          <span class="tag mcp">git commit</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

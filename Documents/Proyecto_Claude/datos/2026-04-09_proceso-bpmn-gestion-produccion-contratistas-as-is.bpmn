@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             targetNamespace="http://arauco.com/mejora-continua/bpmn"
+             id="Definitions_GestionContratistas_ASIS">
+
+  <process id="Process_GestionContratistas_ASIS" name="Gestión Producción Contratistas — AS-IS" isExecutable="false">
+
+    <laneSet id="LaneSet_1">
+      <lane id="Lane_AreaContratos" name="Área Contratos">
+        <flowNodeRef>Start_1</flowNodeRef>
+        <flowNodeRef>Task_GenerarContrato</flowNodeRef>
+      </lane>
+      <lane id="Lane_LiderOperaciones" name="Líder de Operaciones">
+        <flowNodeRef>Start_Timer_Diario</flowNodeRef>
+        <flowNodeRef>Task_NotificarProduccion</flowNodeRef>
+      </lane>
+      <lane id="Lane_EncargadoCosecha" name="Encargado Cosecha">
+        <flowNodeRef>Task_CreacionActas</flowNodeRef>
+      </lane>
+      <lane id="Lane_AnalistaLogistico" name="Analista C. Producción Logístico">
+        <flowNodeRef>Start_DiaSiguiente</flowNodeRef>
+        <flowNodeRef>Task_ValidacionNOC</flowNodeRef>
+        <flowNodeRef>GW_EsNOC</flowNodeRef>
+        <flowNodeRef>Task_Revision</flowNodeRef>
+        <flowNodeRef>GW_TipoDesvio</flowNodeRef>
+        <flowNodeRef>Task_EliminaDuplicado</flowNodeRef>
+        <flowNodeRef>Task_CorreccionDesvio</flowNodeRef>
+        <flowNodeRef>Task_SaleInventario</flowNodeRef>
+        <flowNodeRef>GW_UnionRevision</flowNodeRef>
+        <flowNodeRef>Task_ProcesoInventario</flowNodeRef>
+        <flowNodeRef>Task_PreliminarNOC</flowNodeRef>
+        <flowNodeRef>Start_Timer_Noche</flowNodeRef>
+        <flowNodeRef>Task_CreacionPedidos</flowNodeRef>
+        <flowNodeRef>Start_Timer_Mensual</flowNodeRef>
+        <flowNodeRef>GW_InicioMensual</flowNodeRef>
+        <flowNodeRef>Task_CuadraturaInterna</flowNodeRef>
+        <flowNodeRef>GW_CuadraturaOk</flowNodeRef>
+        <flowNodeRef>Task_ReasignaNotificacion</flowNodeRef>
+        <flowNodeRef>End_CuadraturaOk</flowNodeRef>
+        <flowNodeRef>End_ReasignaOk</flowNodeRef>
+      </lane>
+      <lane id="Lane_AnalistaValorizado" name="Analista C. Producción Valorizado">
+        <flowNodeRef>Task_CreacionContratoSAP</flowNodeRef>
+        <flowNodeRef>Task_CreacionContratoMA</flowNodeRef>
+        <flowNodeRef>Task_CreacionContratoCDH</flowNodeRef>
+        <flowNodeRef>End_ContratosCreados</flowNodeRef>
+        <flowNodeRef>GW_CambiosVMA</flowNodeRef>
+        <flowNodeRef>Task_GestionModificacionesVMA</flowNodeRef>
+        <flowNodeRef>End_ModificacionesVMA</flowNodeRef>
+        <flowNodeRef>Task_ActualizaVariables</flowNodeRef>
+        <flowNodeRef>Task_CalculaTarifas</flowNodeRef>
+        <flowNodeRef>Task_ConciliaProduccion</flowNodeRef>
+        <flowNodeRef>Task_ValoraProduccion</flowNodeRef>
+        <flowNodeRef>Task_RevisaEEGMM</flowNodeRef>
+        <flowNodeRef>GW_ExistenDiferencias</flowNodeRef>
+        <flowNodeRef>Task_TramitaErrores</flowNodeRef>
+        <flowNodeRef>Task_DaVoBo</flowNodeRef>
+        <flowNodeRef>Task_EnviaReportes</flowNodeRef>
+        <flowNodeRef>End_Valorizado</flowNodeRef>
+        <flowNodeRef>End_TramiteError</flowNodeRef>
+      </lane>
+      <lane id="Lane_AnalistaTerreno" name="Analista C. Producción Terreno">
+        <flowNodeRef>Task_CierreActas</flowNodeRef>
+        <flowNodeRef>End_CierreActas</flowNodeRef>
+      </lane>
+      <lane id="Lane_JefeProduccion" name="Jefe Producción Contratista">
+        <flowNodeRef>Task_AprobacionValorizado</flowNodeRef>
+      </lane>
+      <lane id="Lane_Contratista" name="Contratista / Contratante">
+        <flowNodeRef>Task_GeneraMemoAvance</flowNodeRef>
+        <flowNodeRef>End_MemoAvance</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- ============================================================ -->
+    <!-- FASE 1: CREACIÓN CONTRATO Y ACTAS                           -->
+    <!-- ============================================================ -->
+
+    <!-- Área Contratos -->
+    <startEvent id="Start_1" name="Inicio proceso contratación">
+      <outgoing>Flow_1</outgoing>
+    </startEvent>
+    <userTask id="Task_GenerarContrato" name="Generar contrato">
+      <incoming>Flow_1</incoming>
+      <outgoing>Flow_2</outgoing>
+      <!-- VAN: Necesario internamente, no agrega valor al cliente -->
+    </userTask>
+
+    <!-- Encargado Cosecha -->
+    <userTask id="Task_CreacionActas" name="Creación de actas">
+      <incoming>Flow_2</incoming>
+      <outgoing>Flow_3</outgoing>
+      <!-- VA: Core del registro de producción -->
+    </userTask>
+
+    <!-- Analista Valorizado — Contratos paralelos -->
+    <userTask id="Task_CreacionContratoSAP" name="Creación contrato SAP">
+      <incoming>Flow_2b</incoming>
+      <outgoing>Flow_SAP_out</outgoing>
+    </userTask>
+    <userTask id="Task_CreacionContratoMA" name="Creación contrato MA">
+      <incoming>Flow_2c</incoming>
+      <outgoing>Flow_MA_out</outgoing>
+    </userTask>
+    <userTask id="Task_CreacionContratoCDH" name="Creación contrato CDH">
+      <incoming>Flow_2d</incoming>
+      <outgoing>Flow_CDH_out</outgoing>
+    </userTask>
+    <endEvent id="End_ContratosCreados" name="Contratos creados en sistemas">
+      <incoming>Flow_SAP_out</incoming>
+      <incoming>Flow_MA_out</incoming>
+      <incoming>Flow_CDH_out</incoming>
+    </endEvent>
+
+    <!-- ============================================================ -->
+    <!-- FASE 2: REVISIÓN PRODUCCIÓN                                  -->
+    <!-- ============================================================ -->
+
+    <!-- Timer diario — Líder Operaciones -->
+    <startEvent id="Start_Timer_Diario" name="Cada día">
+      <timerEventDefinition/>
+      <outgoing>Flow_Timer_Diario</outgoing>
+    </startEvent>
+    <serviceTask id="Task_NotificarProduccion" name="Notificar producción diaria">
+      <incoming>Flow_Timer_Diario</incoming>
+      <outgoing>Flow_Notif_out</outgoing>
+      <!-- VAN: Automatizable -->
+    </serviceTask>
+
+    <!-- Analista Logístico — Validación NOC día siguiente -->
+    <startEvent id="Start_DiaSiguiente" name="Día siguiente">
+      <timerEventDefinition/>
+      <outgoing>Flow_DiaSig</outgoing>
+    </startEvent>
+    <userTask id="Task_ValidacionNOC" name="Validación Acta/NOC">
+      <incoming>Flow_DiaSig</incoming>
+      <incoming>Flow_Notif_out</incoming>
+      <outgoing>Flow_ValidNOC</outgoing>
+      <!-- VA: Control clave de calidad del dato -->
+    </userTask>
+    <exclusiveGateway id="GW_EsNOC" name="¿NOC ok?">
+      <incoming>Flow_ValidNOC</incoming>
+      <outgoing>Flow_NOC_Si</outgoing>
+      <outgoing>Flow_NOC_No</outgoing>
+    </exclusiveGateway>
+
+    <!-- Rama NO: revisión -->
+    <userTask id="Task_Revision" name="Revisión">
+      <incoming>Flow_NOC_No</incoming>
+      <outgoing>Flow_Rev_out</outgoing>
+      <!-- NVA: Retrabajo por calidad del dato -->
+    </userTask>
+    <exclusiveGateway id="GW_TipoDesvio" name="Tipo de desvío">
+      <incoming>Flow_Rev_out</incoming>
+      <outgoing>Flow_Duplicado</outgoing>
+      <outgoing>Flow_Desvio</outgoing>
+      <outgoing>Flow_Tendencia</outgoing>
+    </exclusiveGateway>
+    <userTask id="Task_EliminaDuplicado" name="Eliminación de duplicado">
+      <incoming>Flow_Duplicado</incoming>
+      <outgoing>Flow_Dup_out</outgoing>
+      <!-- NVA: Desperdicio — error de origen -->
+    </userTask>
+    <userTask id="Task_CorreccionDesvio" name="Corrección de desvío">
+      <incoming>Flow_Desvio</incoming>
+      <outgoing>Flow_Des_out</outgoing>
+      <!-- NVA: Retrabajo -->
+    </userTask>
+    <userTask id="Task_SaleInventario" name="Sale de inventario (Tendencia)">
+      <incoming>Flow_Tendencia</incoming>
+      <outgoing>Flow_Tend_out</outgoing>
+      <!-- NVA: Ajuste por desvío -->
+    </userTask>
+
+    <!-- Convergencia revisión -->
+    <exclusiveGateway id="GW_UnionRevision" name="">
+      <incoming>Flow_Dup_out</incoming>
+      <incoming>Flow_Des_out</incoming>
+      <incoming>Flow_Tend_out</incoming>
+      <outgoing>Flow_Union_out</outgoing>
+    </exclusiveGateway>
+
+    <!-- Rama SI: proceso inventario -->
+    <serviceTask id="Task_ProcesoInventario" name="A proceso de inventario">
+      <incoming>Flow_NOC_Si</incoming>
+      <incoming>Flow_Union_out</incoming>
+      <outgoing>Flow_Inv_out</outgoing>
+    </serviceTask>
+    <userTask id="Task_PreliminarNOC" name="Preliminar Acta/NOC">
+      <incoming>Flow_Inv_out</incoming>
+      <outgoing>Flow_Prel_out</outgoing>
+      <!-- VA: Consolidación para pedidos -->
+    </userTask>
+
+    <!-- Timer noche — creación pedidos -->
+    <startEvent id="Start_Timer_Noche" name="Cada noche">
+      <timerEventDefinition/>
+      <outgoing>Flow_Timer_Noche</outgoing>
+    </startEvent>
+    <serviceTask id="Task_CreacionPedidos" name="Creación pedidos">
+      <incoming>Flow_Timer_Noche</incoming>
+      <incoming>Flow_Prel_out</incoming>
+      <outgoing>Flow_Pedidos_out</outgoing>
+      <!-- VAN: Automatizado pero dependiente de calidad upstream -->
+    </serviceTask>
+
+    <!-- Timer mensual — cuadratura -->
+    <startEvent id="Start_Timer_Mensual" name="Mensual">
+      <timerEventDefinition/>
+      <outgoing>Flow_Timer_Mensual</outgoing>
+    </startEvent>
+    <parallelGateway id="GW_InicioMensual" name="">
+      <incoming>Flow_Timer_Mensual</incoming>
+      <incoming>Flow_Pedidos_out</incoming>
+      <outgoing>Flow_Mensual_out</outgoing>
+    </parallelGateway>
+    <userTask id="Task_CuadraturaInterna" name="Cuadratura interna sistemas">
+      <incoming>Flow_Mensual_out</incoming>
+      <outgoing>Flow_Cuad_out</outgoing>
+      <!-- NVA: Señal de falta de integración entre sistemas -->
+    </userTask>
+    <exclusiveGateway id="GW_CuadraturaOk" name="¿Cuadratura ok?">
+      <incoming>Flow_Cuad_out</incoming>
+      <outgoing>Flow_Cuad_Si</outgoing>
+      <outgoing>Flow_Cuad_No</outgoing>
+    </exclusiveGateway>
+    <endEvent id="End_CuadraturaOk" name="Cuadratura conforme">
+      <incoming>Flow_Cuad_Si</incoming>
+    </endEvent>
+    <userTask id="Task_ReasignaNotificacion" name="Reasigna notificación">
+      <incoming>Flow_Cuad_No</incoming>
+      <outgoing>Flow_Reas_out</outgoing>
+      <!-- NVA: Retrabajo por cuadratura fallida -->
+    </userTask>
+    <endEvent id="End_ReasignaOk" name="Notificación reasignada">
+      <incoming>Flow_Reas_out</incoming>
+    </endEvent>
+
+    <!-- Cambios VMA -->
+    <exclusiveGateway id="GW_CambiosVMA" name="Cambios VMA">
+      <incoming>Flow_Pedidos_out2</incoming>
+      <outgoing>Flow_VMA_Si</outgoing>
+      <outgoing>Flow_VMA_No</outgoing>
+    </exclusiveGateway>
+    <userTask id="Task_GestionModificacionesVMA" name="Gestión modificaciones VMA">
+      <incoming>Flow_VMA_Si</incoming>
+      <outgoing>Flow_VMA_out</outgoing>
+    </userTask>
+    <endEvent id="End_ModificacionesVMA" name="Modificaciones VMA registradas">
+      <incoming>Flow_VMA_out</incoming>
+    </endEvent>
+
+    <!-- Cierre Actas — Analista Terreno -->
+    <userTask id="Task_CierreActas" name="Cierre de Actas">
+      <incoming>Flow_VMA_No</incoming>
+      <outgoing>Flow_Cierre_out</outgoing>
+      <!-- VA: Cierre formal del período -->
+    </userTask>
+    <endEvent id="End_CierreActas" name="Actas cerradas">
+      <incoming>Flow_Cierre_out</incoming>
+    </endEvent>
+
+    <!-- ============================================================ -->
+    <!-- FASE 3: VALORIZACIÓN                                         -->
+    <!-- ============================================================ -->
+
+    <userTask id="Task_ActualizaVariables" name="Actualizar variables y configura contrato">
+      <incoming>Flow_Cuad_Si2</incoming>
+      <outgoing>Flow_ActVar_out</outgoing>
+      <!-- VA: Configuración para valorización -->
+    </userTask>
+    <serviceTask id="Task_CalculaTarifas" name="Calcula tarifas y configura">
+      <incoming>Flow_ActVar_out</incoming>
+      <outgoing>Flow_Tar_out</outgoing>
+      <!-- VA: Core de valorización -->
+    </serviceTask>
+    <userTask id="Task_ConciliaProduccion" name="Concilia producción/sistemas">
+      <incoming>Flow_Tar_out</incoming>
+      <outgoing>Flow_Conc_out</outgoing>
+      <!-- NVA: Indica desconexión SAP-MI -->
+    </userTask>
+    <userTask id="Task_ValoraProduccion" name="Valora producción">
+      <incoming>Flow_Conc_out</incoming>
+      <outgoing>Flow_Val_out</outgoing>
+      <!-- VA: Core del proceso -->
+    </userTask>
+    <userTask id="Task_RevisaEEGMM" name="Revisa EEGMM (Excel)">
+      <incoming>Flow_Val_out</incoming>
+      <outgoing>Flow_EEGMM_out</outgoing>
+      <!-- VAN: Manual en Excel — candidato a automatizar -->
+    </userTask>
+    <exclusiveGateway id="GW_ExistenDiferencias" name="¿Existen diferencias?">
+      <incoming>Flow_EEGMM_out</incoming>
+      <outgoing>Flow_Dif_Si</outgoing>
+      <outgoing>Flow_Dif_No</outgoing>
+    </exclusiveGateway>
+    <userTask id="Task_TramitaErrores" name="Tramita errores/diferencias">
+      <incoming>Flow_Dif_Si</incoming>
+      <outgoing>Flow_Tram_out</outgoing>
+      <!-- NVA: Retrabajo por diferencias en valorización -->
+    </userTask>
+    <endEvent id="End_TramiteError" name="Error tramitado">
+      <incoming>Flow_Tram_out</incoming>
+    </endEvent>
+    <userTask id="Task_DaVoBo" name="Da VoBo pedidos">
+      <incoming>Flow_Dif_No</incoming>
+      <outgoing>Flow_VoBo_out</outgoing>
+      <!-- VA: Control final -->
+    </userTask>
+    <userTask id="Task_EnviaReportes" name="Envía reportes">
+      <incoming>Flow_VoBo_out</incoming>
+      <outgoing>Flow_Rep_out</outgoing>
+      <!-- VAN: Comunicación necesaria -->
+    </userTask>
+    <endEvent id="End_Valorizado" name="Valorización completada">
+      <incoming>Flow_Rep_out</incoming>
+    </endEvent>
+
+    <!-- Jefe Producción -->
+    <userTask id="Task_AprobacionValorizado" name="Aprobación valorizado">
+      <incoming>Flow_Rep_out2</incoming>
+      <outgoing>Flow_Apro_out</outgoing>
+      <!-- VA: Control de calidad final -->
+    </userTask>
+
+    <!-- Contratista -->
+    <userTask id="Task_GeneraMemoAvance" name="Generar memo avance">
+      <incoming>Flow_Apro_out</incoming>
+      <outgoing>Flow_Memo_out</outgoing>
+      <!-- VA: Entregable final al contratista -->
+    </userTask>
+    <endEvent id="End_MemoAvance" name="Memo de avance emitido">
+      <incoming>Flow_Memo_out</incoming>
+    </endEvent>
+
+    <!-- ============================================================ -->
+    <!-- FLUJOS DE SECUENCIA                                          -->
+    <!-- ============================================================ -->
+
+    <!-- Fase 1 -->
+    <sequenceFlow id="Flow_1" sourceRef="Start_1" targetRef="Task_GenerarContrato"/>
+    <sequenceFlow id="Flow_2" sourceRef="Task_GenerarContrato" targetRef="Task_CreacionActas"/>
+    <sequenceFlow id="Flow_2b" sourceRef="Task_GenerarContrato" targetRef="Task_CreacionContratoSAP"/>
+    <sequenceFlow id="Flow_2c" sourceRef="Task_GenerarContrato" targetRef="Task_CreacionContratoMA"/>
+    <sequenceFlow id="Flow_2d" sourceRef="Task_GenerarContrato" targetRef="Task_CreacionContratoCDH"/>
+    <sequenceFlow id="Flow_SAP_out" sourceRef="Task_CreacionContratoSAP" targetRef="End_ContratosCreados"/>
+    <sequenceFlow id="Flow_MA_out" sourceRef="Task_CreacionContratoMA" targetRef="End_ContratosCreados"/>
+    <sequenceFlow id="Flow_CDH_out" sourceRef="Task_CreacionContratoCDH" targetRef="End_ContratosCreados"/>
+    <sequenceFlow id="Flow_3" sourceRef="Task_CreacionActas" targetRef="Task_ValidacionNOC"/>
+
+    <!-- Fase 2 — Notificación -->
+    <sequenceFlow id="Flow_Timer_Diario" sourceRef="Start_Timer_Diario" targetRef="Task_NotificarProduccion"/>
+    <sequenceFlow id="Flow_Notif_out" sourceRef="Task_NotificarProduccion" targetRef="Task_ValidacionNOC"/>
+    <sequenceFlow id="Flow_DiaSig" sourceRef="Start_DiaSiguiente" targetRef="Task_ValidacionNOC"/>
+
+    <!-- Fase 2 — Validación NOC -->
+    <sequenceFlow id="Flow_ValidNOC" sourceRef="Task_ValidacionNOC" targetRef="GW_EsNOC"/>
+    <sequenceFlow id="Flow_NOC_Si" name="Sí" sourceRef="GW_EsNOC" targetRef="Task_ProcesoInventario">
+      <conditionExpression>${nocOk == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_NOC_No" name="No" sourceRef="GW_EsNOC" targetRef="Task_Revision">
+      <conditionExpression>${nocOk == false}</conditionExpression>
+    </sequenceFlow>
+
+    <!-- Fase 2 — Revisión y desvíos -->
+    <sequenceFlow id="Flow_Rev_out" sourceRef="Task_Revision" targetRef="GW_TipoDesvio"/>
+    <sequenceFlow id="Flow_Duplicado" name="Duplicado" sourceRef="GW_TipoDesvio" targetRef="Task_EliminaDuplicado"/>
+    <sequenceFlow id="Flow_Desvio" name="Desvío" sourceRef="GW_TipoDesvio" targetRef="Task_CorreccionDesvio"/>
+    <sequenceFlow id="Flow_Tendencia" name="Tendencia" sourceRef="GW_TipoDesvio" targetRef="Task_SaleInventario"/>
+    <sequenceFlow id="Flow_Dup_out" sourceRef="Task_EliminaDuplicado" targetRef="GW_UnionRevision"/>
+    <sequenceFlow id="Flow_Des_out" sourceRef="Task_CorreccionDesvio" targetRef="GW_UnionRevision"/>
+    <sequenceFlow id="Flow_Tend_out" sourceRef="Task_SaleInventario" targetRef="GW_UnionRevision"/>
+    <sequenceFlow id="Flow_Union_out" sourceRef="GW_UnionRevision" targetRef="Task_ProcesoInventario"/>
+
+    <!-- Fase 2 — Inventario y pedidos -->
+    <sequenceFlow id="Flow_Inv_out" sourceRef="Task_ProcesoInventario" targetRef="Task_PreliminarNOC"/>
+    <sequenceFlow id="Flow_Prel_out" sourceRef="Task_PreliminarNOC" targetRef="Task_CreacionPedidos"/>
+    <sequenceFlow id="Flow_Timer_Noche" sourceRef="Start_Timer_Noche" targetRef="Task_CreacionPedidos"/>
+    <sequenceFlow id="Flow_Pedidos_out" sourceRef="Task_CreacionPedidos" targetRef="GW_InicioMensual"/>
+    <sequenceFlow id="Flow_Pedidos_out2" sourceRef="Task_CreacionPedidos" targetRef="GW_CambiosVMA"/>
+
+    <!-- Fase 2 — Cuadratura mensual -->
+    <sequenceFlow id="Flow_Timer_Mensual" sourceRef="Start_Timer_Mensual" targetRef="GW_InicioMensual"/>
+    <sequenceFlow id="Flow_Mensual_out" sourceRef="GW_InicioMensual" targetRef="Task_CuadraturaInterna"/>
+    <sequenceFlow id="Flow_Cuad_out" sourceRef="Task_CuadraturaInterna" targetRef="GW_CuadraturaOk"/>
+    <sequenceFlow id="Flow_Cuad_Si" name="Sí" sourceRef="GW_CuadraturaOk" targetRef="End_CuadraturaOk">
+      <conditionExpression>${cuadraturaOk == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_Cuad_Si2" name="Sí" sourceRef="GW_CuadraturaOk" targetRef="Task_ActualizaVariables">
+      <conditionExpression>${cuadraturaOk == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_Cuad_No" name="No" sourceRef="GW_CuadraturaOk" targetRef="Task_ReasignaNotificacion">
+      <conditionExpression>${cuadraturaOk == false}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_Reas_out" sourceRef="Task_ReasignaNotificacion" targetRef="End_ReasignaOk"/>
+
+    <!-- Cambios VMA y cierre actas -->
+    <sequenceFlow id="Flow_VMA_Si" name="Sí" sourceRef="GW_CambiosVMA" targetRef="Task_GestionModificacionesVMA">
+      <conditionExpression>${cambiosVMA == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_VMA_No" name="No" sourceRef="GW_CambiosVMA" targetRef="Task_CierreActas">
+      <conditionExpression>${cambiosVMA == false}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_VMA_out" sourceRef="Task_GestionModificacionesVMA" targetRef="End_ModificacionesVMA"/>
+    <sequenceFlow id="Flow_Cierre_out" sourceRef="Task_CierreActas" targetRef="End_CierreActas"/>
+
+    <!-- Fase 3 — Valorización -->
+    <sequenceFlow id="Flow_ActVar_out" sourceRef="Task_ActualizaVariables" targetRef="Task_CalculaTarifas"/>
+    <sequenceFlow id="Flow_Tar_out" sourceRef="Task_CalculaTarifas" targetRef="Task_ConciliaProduccion"/>
+    <sequenceFlow id="Flow_Conc_out" sourceRef="Task_ConciliaProduccion" targetRef="Task_ValoraProduccion"/>
+    <sequenceFlow id="Flow_Val_out" sourceRef="Task_ValoraProduccion" targetRef="Task_RevisaEEGMM"/>
+    <sequenceFlow id="Flow_EEGMM_out" sourceRef="Task_RevisaEEGMM" targetRef="GW_ExistenDiferencias"/>
+    <sequenceFlow id="Flow_Dif_Si" name="Sí" sourceRef="GW_ExistenDiferencias" targetRef="Task_TramitaErrores">
+      <conditionExpression>${diferencias == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_Dif_No" name="No" sourceRef="GW_ExistenDiferencias" targetRef="Task_DaVoBo">
+      <conditionExpression>${diferencias == false}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_Tram_out" sourceRef="Task_TramitaErrores" targetRef="End_TramiteError"/>
+    <sequenceFlow id="Flow_VoBo_out" sourceRef="Task_DaVoBo" targetRef="Task_EnviaReportes"/>
+    <sequenceFlow id="Flow_Rep_out" sourceRef="Task_EnviaReportes" targetRef="End_Valorizado"/>
+    <sequenceFlow id="Flow_Rep_out2" sourceRef="Task_EnviaReportes" targetRef="Task_AprobacionValorizado"/>
+    <sequenceFlow id="Flow_Apro_out" sourceRef="Task_AprobacionValorizado" targetRef="Task_GeneraMemoAvance"/>
+    <sequenceFlow id="Flow_Memo_out" sourceRef="Task_GeneraMemoAvance" targetRef="End_MemoAvance"/>
+
+  </process>
+
+  <!-- ============================================================ -->
+  <!-- DIAGRAMA VISUAL                                              -->
+  <!-- ============================================================ -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_GestionContratistas_ASIS">
+
+      <!-- LANE ÁREA CONTRATOS -->
+      <bpmndi:BPMNShape id="Start_1_di" bpmnElement="Start_1">
+        <dc:Bounds x="80" y="52" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="56" y="95" width="85" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_GenerarContrato_di" bpmnElement="Task_GenerarContrato">
+        <dc:Bounds x="160" y="30" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <!-- LANE LÍDER OPERACIONES -->
+      <bpmndi:BPMNShape id="Start_Timer_Diario_di" bpmnElement="Start_Timer_Diario">
+        <dc:Bounds x="80" y="172" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="60" y="215" width="76" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_NotificarProduccion_di" bpmnElement="Task_NotificarProduccion">
+        <dc:Bounds x="160" y="150" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <!-- LANE ENCARGADO COSECHA -->
+      <bpmndi:BPMNShape id="Task_CreacionActas_di" bpmnElement="Task_CreacionActas">
+        <dc:Bounds x="340" y="270" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <!-- LANE ANALISTA LOGÍSTICO -->
+      <bpmndi:BPMNShape id="Start_DiaSiguiente_di" bpmnElement="Start_DiaSiguiente">
+        <dc:Bounds x="80" y="432" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="56" y="475" width="85" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ValidacionNOC_di" bpmnElement="Task_ValidacionNOC">
+        <dc:Bounds x="500" y="410" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_EsNOC_di" bpmnElement="GW_EsNOC" isMarkerVisible="true">
+        <dc:Bounds x="675" y="425" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="660" y="482" width="80" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Revision_di" bpmnElement="Task_Revision">
+        <dc:Bounds x="780" y="410" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_TipoDesvio_di" bpmnElement="GW_TipoDesvio" isMarkerVisible="true">
+        <dc:Bounds x="955" y="425" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="935" y="482" width="90" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_EliminaDuplicado_di" bpmnElement="Task_EliminaDuplicado">
+        <dc:Bounds x="1060" y="330" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CorreccionDesvio_di" bpmnElement="Task_CorreccionDesvio">
+        <dc:Bounds x="1060" y="420" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SaleInventario_di" bpmnElement="Task_SaleInventario">
+        <dc:Bounds x="1060" y="510" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_UnionRevision_di" bpmnElement="GW_UnionRevision" isMarkerVisible="true">
+        <dc:Bounds x="1235" y="425" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ProcesoInventario_di" bpmnElement="Task_ProcesoInventario">
+        <dc:Bounds x="1340" y="410" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PreliminarNOC_di" bpmnElement="Task_PreliminarNOC">
+        <dc:Bounds x="1520" y="410" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_Timer_Noche_di" bpmnElement="Start_Timer_Noche">
+        <dc:Bounds x="1555" y="540" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1530" y="583" width="86" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CreacionPedidos_di" bpmnElement="Task_CreacionPedidos">
+        <dc:Bounds x="1700" y="410" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_Timer_Mensual_di" bpmnElement="Start_Timer_Mensual">
+        <dc:Bounds x="1735" y="540" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1718" y="583" width="70" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_InicioMensual_di" bpmnElement="GW_InicioMensual">
+        <dc:Bounds x="1875" y="425" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CuadraturaInterna_di" bpmnElement="Task_CuadraturaInterna">
+        <dc:Bounds x="1980" y="410" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_CuadraturaOk_di" bpmnElement="GW_CuadraturaOk" isMarkerVisible="true">
+        <dc:Bounds x="2155" y="425" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="2130" y="482" width="100" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_CuadraturaOk_di" bpmnElement="End_CuadraturaOk">
+        <dc:Bounds x="2262" y="352" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="2238" y="395" width="85" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ReasignaNotificacion_di" bpmnElement="Task_ReasignaNotificacion">
+        <dc:Bounds x="2260" y="500" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_ReasignaOk_di" bpmnElement="End_ReasignaOk">
+        <dc:Bounds x="2442" y="522" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="2418" y="565" width="85" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- LANE ANALISTA VALORIZADO — CONTRATOS -->
+      <bpmndi:BPMNShape id="Task_CreacionContratoSAP_di" bpmnElement="Task_CreacionContratoSAP">
+        <dc:Bounds x="340" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CreacionContratoMA_di" bpmnElement="Task_CreacionContratoMA">
+        <dc:Bounds x="500" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CreacionContratoCDH_di" bpmnElement="Task_CreacionContratoCDH">
+        <dc:Bounds x="660" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_ContratosCreados_di" bpmnElement="End_ContratosCreados">
+        <dc:Bounds x="842" y="642" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="815" y="685" width="90" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- LANE ANALISTA VALORIZADO — VALORIZACIÓN -->
+      <bpmndi:BPMNShape id="GW_CambiosVMA_di" bpmnElement="GW_CambiosVMA" isMarkerVisible="true">
+        <dc:Bounds x="1875" y="635" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1855" y="692" width="90" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_GestionModificacionesVMA_di" bpmnElement="Task_GestionModificacionesVMA">
+        <dc:Bounds x="1980" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_ModificacionesVMA_di" bpmnElement="End_ModificacionesVMA">
+        <dc:Bounds x="2162" y="642" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="2135" y="685" width="90" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ActualizaVariables_di" bpmnElement="Task_ActualizaVariables">
+        <dc:Bounds x="2260" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CalculaTarifas_di" bpmnElement="Task_CalculaTarifas">
+        <dc:Bounds x="2440" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ConciliaProduccion_di" bpmnElement="Task_ConciliaProduccion">
+        <dc:Bounds x="2620" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ValoraProduccion_di" bpmnElement="Task_ValoraProduccion">
+        <dc:Bounds x="2800" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RevisaEEGMM_di" bpmnElement="Task_RevisaEEGMM">
+        <dc:Bounds x="2980" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_ExistenDiferencias_di" bpmnElement="GW_ExistenDiferencias" isMarkerVisible="true">
+        <dc:Bounds x="3155" y="635" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="3130" y="692" width="100" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_TramitaErrores_di" bpmnElement="Task_TramitaErrores">
+        <dc:Bounds x="3260" y="540" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_TramiteError_di" bpmnElement="End_TramiteError">
+        <dc:Bounds x="3442" y="562" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="3418" y="605" width="85" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_DaVoBo_di" bpmnElement="Task_DaVoBo">
+        <dc:Bounds x="3260" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_EnviaReportes_di" bpmnElement="Task_EnviaReportes">
+        <dc:Bounds x="3440" y="620" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Valorizado_di" bpmnElement="End_Valorizado">
+        <dc:Bounds x="3622" y="642" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="3595" y="685" width="90" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- LANE ANALISTA TERRENO -->
+      <bpmndi:BPMNShape id="Task_CierreActas_di" bpmnElement="Task_CierreActas">
+        <dc:Bounds x="1980" y="810" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_CierreActas_di" bpmnElement="End_CierreActas">
+        <dc:Bounds x="2162" y="832" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="2138" y="875" width="85" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- LANE JEFE PRODUCCIÓN -->
+      <bpmndi:BPMNShape id="Task_AprobacionValorizado_di" bpmnElement="Task_AprobacionValorizado">
+        <dc:Bounds x="3440" y="1000" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <!-- LANE CONTRATISTA -->
+      <bpmndi:BPMNShape id="Task_GeneraMemoAvance_di" bpmnElement="Task_GeneraMemoAvance">
+        <dc:Bounds x="3440" y="1190" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_MemoAvance_di" bpmnElement="End_MemoAvance">
+        <dc:Bounds x="3622" y="1212" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="3595" y="1255" width="90" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- EDGES -->
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1"><di:waypoint x="116" y="70"/><di:waypoint x="160" y="70"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2"><di:waypoint x="280" y="70"/><di:waypoint x="400" y="310"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2b_di" bpmnElement="Flow_2b"><di:waypoint x="280" y="70"/><di:waypoint x="400" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2c_di" bpmnElement="Flow_2c"><di:waypoint x="280" y="70"/><di:waypoint x="560" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2d_di" bpmnElement="Flow_2d"><di:waypoint x="280" y="70"/><di:waypoint x="720" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_SAP_out_di" bpmnElement="Flow_SAP_out"><di:waypoint x="460" y="660"/><di:waypoint x="842" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_MA_out_di" bpmnElement="Flow_MA_out"><di:waypoint x="620" y="660"/><di:waypoint x="842" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_CDH_out_di" bpmnElement="Flow_CDH_out"><di:waypoint x="780" y="660"/><di:waypoint x="842" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3"><di:waypoint x="460" y="310"/><di:waypoint x="560" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Timer_Diario_di" bpmnElement="Flow_Timer_Diario"><di:waypoint x="116" y="190"/><di:waypoint x="160" y="190"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Notif_out_di" bpmnElement="Flow_Notif_out"><di:waypoint x="280" y="190"/><di:waypoint x="560" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_DiaSig_di" bpmnElement="Flow_DiaSig"><di:waypoint x="116" y="450"/><di:waypoint x="500" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ValidNOC_di" bpmnElement="Flow_ValidNOC"><di:waypoint x="620" y="450"/><di:waypoint x="675" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_NOC_Si_di" bpmnElement="Flow_NOC_Si"><di:waypoint x="725" y="450"/><di:waypoint x="1340" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_NOC_No_di" bpmnElement="Flow_NOC_No"><di:waypoint x="700" y="425"/><di:waypoint x="700" y="390"/><di:waypoint x="780" y="390"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Rev_out_di" bpmnElement="Flow_Rev_out"><di:waypoint x="900" y="450"/><di:waypoint x="955" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Duplicado_di" bpmnElement="Flow_Duplicado"><di:waypoint x="980" y="425"/><di:waypoint x="980" y="370"/><di:waypoint x="1060" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Desvio_di" bpmnElement="Flow_Desvio"><di:waypoint x="1005" y="450"/><di:waypoint x="1060" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Tendencia_di" bpmnElement="Flow_Tendencia"><di:waypoint x="980" y="475"/><di:waypoint x="980" y="550"/><di:waypoint x="1060" y="550"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Dup_out_di" bpmnElement="Flow_Dup_out"><di:waypoint x="1180" y="370"/><di:waypoint x="1260" y="370"/><di:waypoint x="1260" y="425"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Des_out_di" bpmnElement="Flow_Des_out"><di:waypoint x="1180" y="460"/><di:waypoint x="1235" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Tend_out_di" bpmnElement="Flow_Tend_out"><di:waypoint x="1180" y="550"/><di:waypoint x="1260" y="550"/><di:waypoint x="1260" y="475"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Union_out_di" bpmnElement="Flow_Union_out"><di:waypoint x="1285" y="450"/><di:waypoint x="1340" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Inv_out_di" bpmnElement="Flow_Inv_out"><di:waypoint x="1460" y="450"/><di:waypoint x="1520" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Prel_out_di" bpmnElement="Flow_Prel_out"><di:waypoint x="1640" y="450"/><di:waypoint x="1700" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Timer_Noche_di" bpmnElement="Flow_Timer_Noche"><di:waypoint x="1573" y="540"/><di:waypoint x="1760" y="490"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Pedidos_out_di" bpmnElement="Flow_Pedidos_out"><di:waypoint x="1820" y="450"/><di:waypoint x="1875" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Pedidos_out2_di" bpmnElement="Flow_Pedidos_out2"><di:waypoint x="1760" y="490"/><di:waypoint x="1760" y="660"/><di:waypoint x="1875" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Timer_Mensual_di" bpmnElement="Flow_Timer_Mensual"><di:waypoint x="1753" y="540"/><di:waypoint x="1875" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Mensual_out_di" bpmnElement="Flow_Mensual_out"><di:waypoint x="1925" y="450"/><di:waypoint x="1980" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cuad_out_di" bpmnElement="Flow_Cuad_out"><di:waypoint x="2100" y="450"/><di:waypoint x="2155" y="450"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cuad_Si_di" bpmnElement="Flow_Cuad_Si"><di:waypoint x="2180" y="425"/><di:waypoint x="2180" y="370"/><di:waypoint x="2262" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cuad_Si2_di" bpmnElement="Flow_Cuad_Si2"><di:waypoint x="2205" y="450"/><di:waypoint x="2260" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cuad_No_di" bpmnElement="Flow_Cuad_No"><di:waypoint x="2180" y="475"/><di:waypoint x="2180" y="540"/><di:waypoint x="2260" y="540"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Reas_out_di" bpmnElement="Flow_Reas_out"><di:waypoint x="2380" y="540"/><di:waypoint x="2442" y="540"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_VMA_Si_di" bpmnElement="Flow_VMA_Si"><di:waypoint x="1925" y="660"/><di:waypoint x="1980" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_VMA_No_di" bpmnElement="Flow_VMA_No"><di:waypoint x="1900" y="685"/><di:waypoint x="1900" y="850"/><di:waypoint x="1980" y="850"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_VMA_out_di" bpmnElement="Flow_VMA_out"><di:waypoint x="2100" y="660"/><di:waypoint x="2162" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cierre_out_di" bpmnElement="Flow_Cierre_out"><di:waypoint x="2100" y="850"/><di:waypoint x="2162" y="850"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ActVar_out_di" bpmnElement="Flow_ActVar_out"><di:waypoint x="2380" y="660"/><di:waypoint x="2440" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Tar_out_di" bpmnElement="Flow_Tar_out"><di:waypoint x="2560" y="660"/><di:waypoint x="2620" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Conc_out_di" bpmnElement="Flow_Conc_out"><di:waypoint x="2740" y="660"/><di:waypoint x="2800" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Val_out_di" bpmnElement="Flow_Val_out"><di:waypoint x="2920" y="660"/><di:waypoint x="2980" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_EEGMM_out_di" bpmnElement="Flow_EEGMM_out"><di:waypoint x="3100" y="660"/><di:waypoint x="3155" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Dif_Si_di" bpmnElement="Flow_Dif_Si"><di:waypoint x="3180" y="635"/><di:waypoint x="3180" y="580"/><di:waypoint x="3260" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Dif_No_di" bpmnElement="Flow_Dif_No"><di:waypoint x="3205" y="660"/><di:waypoint x="3260" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Tram_out_di" bpmnElement="Flow_Tram_out"><di:waypoint x="3380" y="580"/><di:waypoint x="3442" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_VoBo_out_di" bpmnElement="Flow_VoBo_out"><di:waypoint x="3380" y="660"/><di:waypoint x="3440" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Rep_out_di" bpmnElement="Flow_Rep_out"><di:waypoint x="3560" y="660"/><di:waypoint x="3622" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Rep_out2_di" bpmnElement="Flow_Rep_out2"><di:waypoint x="3500" y="700"/><di:waypoint x="3500" y="1000"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Apro_out_di" bpmnElement="Flow_Apro_out"><di:waypoint x="3500" y="1080"/><di:waypoint x="3500" y="1190"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Memo_out_di" bpmnElement="Flow_Memo_out"><di:waypoint x="3560" y="1230"/><di:waypoint x="3622" y="1230"/></bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>

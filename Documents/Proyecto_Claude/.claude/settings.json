@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem",
+               "./datos", "./agentes", "./orquestador"]
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite",
+               "./datos/arauco_mc.db"]
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git",
+               "--repository", "."]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    }
+  },
+  "permissions": {
+    "allow": ["Bash(python3:*)", "Bash(pip:*)", "Bash(git:*)"],
+    "deny": ["Bash(rm -rf *)"]
+  }
+}

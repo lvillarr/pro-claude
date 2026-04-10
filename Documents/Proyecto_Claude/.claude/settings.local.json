@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(claude-api)",
+      "Skill(claude-api:*)",
+      "Skill(schedule)",
+      "Skill(schedule:*)",
+      "Bash(pip3 install:*)"
+    ]
+  }
+}
