@@ -18,10 +18,27 @@
     "fetch": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+    "excel-mcp": {
+      "command": "npx",
+      "args": ["-y", "@negokaz/excel-mcp-server"],
+      "env": {
+        "EXCEL_MCP_PAGING_CELLS_LIMIT": "4000"
+      }
+    },
+    "markitdown": {
+      "command": "uvx",
+      "args": ["markitdown-mcp"]
     }
   },
   "permissions": {
-    "allow": ["Bash(python3:*)", "Bash(pip:*)", "Bash(git:*)"],
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(pip:*)",
+      "Bash(pip3:*)",
+      "Bash(git:*)",
+      "Bash(uvx:*)"
+    ],
     "deny": ["Bash(rm -rf *)"]
   }
 }

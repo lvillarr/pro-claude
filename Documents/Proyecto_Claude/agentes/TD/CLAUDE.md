@@ -70,6 +70,13 @@ No propones tecnología sin entender el proceso. No sobre-ingenierías solucione
 | `connectivity` | Arquitecturas de datos para predios remotos: sincronización offline/online, edge computing |
 | `integration-architecture` | Diseño de arquitecturas de integración entre sistemas forestales y corporativos |
 | `data-architecture` | Diseño de arquitecturas de datos para el ecosistema forestal: Datalake, Forest Data 2.0, integración con modelos de optimización (Opticort, Opti-Maq, Forest Gantt) |
+| `spec` | Especificación de iniciativas TD: proceso a digitalizar, sistemas involucrados, MVP y KPIs de éxito — ver `agentes/TD/skills/spec/SKILL.md` |
+| `plan` | Planificación técnica: arquitectura de integración, fases de implementación, dependencias de TI y riesgos — ver `agentes/TD/skills/plan/SKILL.md` |
+| `build` | Implementación: scripts ETL, conectores de API, telemetría de dealers, sincronización offline/online — ver `agentes/TD/skills/build/SKILL.md` |
+| `test` | Validación de integraciones: integridad de datos, manejo de errores, pruebas de conectividad adversa, KPIs — ver `agentes/TD/skills/test/SKILL.md` |
+| `review` | Revisión técnica: seguridad de código, idempotencia, calidad de datos en producción, mantenibilidad — ver `agentes/TD/skills/review/SKILL.md` |
+| `ship` | Cierre de iniciativas TD: documentación operacional, hand-off a TI, versionado, lecciones aprendidas — ver `agentes/TD/skills/ship/SKILL.md` |
+| `office-files` | Lectura y edición de `.xlsx`, `.docx`, `.pptx` y `.pdf` para consumir specs técnicas y generar documentación — ver `agentes/TD/skills/office-files/SKILL.md` |
 
 ---
 
@@ -82,6 +89,20 @@ No propones tecnología sin entender el proceso. No sobre-ingenierías solucione
 | `read_file` | Leer configuraciones, esquemas y datos existentes desde `datos/` |
 | `write_file` | Guardar scripts y configuraciones en `datos/scripts/` |
 | `str_replace` | Editar archivos de configuración existentes |
+| `python` | ETL, conectores, integración de sistemas y edición de archivos de oficina |
+
+### Librerías Python disponibles
+
+| Librería | Propósito |
+|---|---|
+| `requests` | Conexión a APIs REST de sistemas forestales y dealers |
+| `pandas`, `sqlalchemy` | ETL y manipulación de datos |
+| `openpyxl` | Leer y editar `.xlsx` (inventarios, configuraciones, crosswalk tables) |
+| `python-docx` | Leer specs técnicas y generar documentación en `.docx` |
+| `python-pptx` | Generar presentaciones de arquitectura en `.pptx` |
+| `pdfplumber`, `pypdf` | Extraer specs de manuales técnicos en `.pdf` |
+
+Instalar si no están: `pip install requests pandas sqlalchemy openpyxl python-docx python-pptx pdfplumber pypdf`
 
 ---
 
@@ -92,6 +113,8 @@ No propones tecnología sin entender el proceso. No sobre-ingenierías solucione
 | `filesystem` | Leer/escribir en `datos/`, `agentes/TD/` |
 | `sqlite` | Consultar y actualizar `datos/arauco_mc.db` y bases de datos operacionales locales |
 | `timeseries-db` | Conectar con bases de datos de telemetría (InfluxDB, TimescaleDB) para datos de máquinas de cosecha en tiempo real |
+| `excel-mcp` | Leer rangos y hojas en archivos `.xlsx` con herramientas nativas |
+| `markitdown` | Convertir `.docx`, `.xlsx`, `.pptx` y `.pdf` a Markdown para lectura rápida |
 | `git` | Versionar scripts y configuraciones |
 | `fetch` | Consumir APIs REST externas |
 

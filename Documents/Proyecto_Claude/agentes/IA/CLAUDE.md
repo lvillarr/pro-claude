@@ -63,6 +63,13 @@ No propones modelos complejos donde bastan reglas simples. La IA debe reducir in
 | `prompt-engineering` | Diseño de prompts para agentes Claude y flujos LangGraph aplicados al negocio forestal; optimización de instrucciones para tareas operacionales |
 | `dashboard-html` | Dashboards interactivos en HTML/CSS/JS (Chart.js, Plotly) sin dependencias externas |
 | `llm-integration` | Integración de LLMs para clasificación, resumen y generación de reportes operacionales |
+| `spec` | Especificación de proyectos IA/GenAI: problema de negocio, tipo de solución, datos requeridos y métricas de éxito — ver `agentes/IA/skills/spec/SKILL.md` |
+| `plan` | Planificación de proyectos IA: fases (EDA → modelado → evaluación → entrega), entorno técnico, experimentos y riesgos — ver `agentes/IA/skills/plan/SKILL.md` |
+| `build` | Desarrollo técnico: EDA, feature engineering, modelos ML, agentes GenAI, dashboards HTML, cartografía — ver `agentes/IA/skills/build/SKILL.md` |
+| `test` | Validación de modelos: métricas vs. meta, explicabilidad, validación de usuario operacional — ver `agentes/IA/skills/test/SKILL.md` |
+| `review` | Revisión de calidad técnica: generalización, data leakage, adopción, mantenibilidad — ver `agentes/IA/skills/review/SKILL.md` |
+| `ship` | Cierre de proyectos IA: documentación, versionado de modelos, plan de reentrenamiento, hand-off — ver `agentes/IA/skills/ship/SKILL.md` |
+| `office-files` | Lectura y edición de `.xlsx`, `.docx`, `.pptx` y `.pdf` para consumir datos operacionales y generar entregables — ver `agentes/IA/skills/office-files/SKILL.md` |
 
 ---
 
@@ -73,7 +80,22 @@ No propones modelos complejos donde bastan reglas simples. La IA debe reducir in
 | `bash` | Ejecutar Python, instalar librerías, manipular archivos |
 | `read_file` | Leer datos de entrada desde `datos/` |
 | `write_file` | Guardar análisis, modelos y dashboards en `datos/` |
-| `python` | Scripts de análisis y modelado directo |
+| `python` | Scripts de análisis, modelado y edición de archivos de oficina |
+
+### Librerías Python disponibles
+
+| Librería | Propósito |
+|---|---|
+| `scikit-learn`, `xgboost` | Modelos ML predictivos |
+| `pandas`, `numpy` | Análisis y transformación de datos |
+| `geopandas`, `shapely` | Análisis geo-espacial |
+| `plotly`, `matplotlib` | Visualización y dashboards |
+| `openpyxl` | Leer y editar `.xlsx` |
+| `python-docx` | Leer y editar `.docx` |
+| `python-pptx` | Leer y editar `.pptx` |
+| `pdfplumber`, `pypdf` | Extraer texto y tablas de `.pdf` |
+
+Instalar si no están: `pip install openpyxl python-docx python-pptx pdfplumber pypdf`
 
 ---
 
@@ -83,6 +105,8 @@ No propones modelos complejos donde bastan reglas simples. La IA debe reducir in
 |---|---|
 | `filesystem` | Leer/escribir en `datos/`, `agentes/IA/` |
 | `sqlite` | Consultar y actualizar `datos/arauco_mc.db` y bases de datos geo-espaciales |
+| `excel-mcp` | Leer rangos y hojas en archivos `.xlsx` con herramientas nativas |
+| `markitdown` | Convertir `.docx`, `.xlsx`, `.pptx` y `.pdf` a Markdown para lectura rápida |
 | `fetch` | Consumir APIs externas si se proporcionan credenciales |
 
 ---

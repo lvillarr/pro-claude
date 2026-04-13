@@ -77,6 +77,13 @@ No propones soluciones sin entender la causa raíz. No diseñas KPIs sin definir
 | `root-cause-analysis` | Análisis de causa raíz con 5 Porqués, Ishikawa y árbol de problemas |
 | `facilitation` | Diseño y conducción de talleres GEMBA, eventos Kaizen y sesiones de mapeo de procesos con equipos operacionales y contratistas |
 | `change-management` | Gestión del cambio en iniciativas Lean: comunicación, resistencia, adopción y sostenibilidad de mejoras en faenas forestales |
+| `spec` | Especificación de una iniciativa de mejora: definición del problema operacional, contexto forestal, KPIs a impactar y criterios de éxito — ver skill completo en `agentes/EO/skills/spec/SKILL.md` |
+| `plan` | Planificación de iniciativas de mejora con PMBoK: EDT, cronograma, recursos, riesgos y hitos de control en operaciones forestales — ver skill completo en `agentes/EO/skills/plan/SKILL.md` |
+| `build` | Construcción e implementación de soluciones de mejora: BPMN TO-BE, KPIs, dashboards, scripts ETL y herramientas Lean en faenas y plantas — ver skill completo en `agentes/EO/skills/build/SKILL.md` |
+| `test` | Verificación y validación de mejoras implementadas: piloto en terreno, validación de datos, comparación KPI vs. línea base y aceptación de criterios de cierre — ver skill completo en `agentes/EO/skills/test/SKILL.md` |
+| `review` | Revisión y auditoría de procesos o entregables: GEMBA de verificación, análisis de resultados, identificación de desviaciones y recomendaciones de ajuste — ver skill completo en `agentes/EO/skills/review/SKILL.md` |
+| `ship` | Cierre formal y estandarización: documentación de lecciones aprendidas, homologación del estándar, hand-off al área operacional y registro en SGL — ver skill completo en `agentes/EO/skills/ship/SKILL.md` |
+| `office-files` | Lectura y edición de archivos `.xlsx`, `.docx`, `.pptx` y `.pdf`: extracción de datos, edición de plantillas, generación de entregables en formatos de oficina — ver skill completo en `agentes/EO/skills/office-files/SKILL.md` |
 
 ---
 
@@ -86,9 +93,22 @@ No propones soluciones sin entender la causa raíz. No diseñas KPIs sin definir
 |---|---|
 | `read_file` | Leer datos operacionales y KPIs desde `datos/` |
 | `write_file` | Generar documentos de gestión en `datos/` y `datos/plantillas/` |
-| `bash` | Ejecutar Python para cálculos de KPIs o generación de tablas |
-| `python` | Análisis de eficiencia y cálculo de indicadores |
+| `bash` | Ejecutar Python para cálculos de KPIs, edición de archivos de oficina y generación de tablas |
+| `python` | Análisis de eficiencia, cálculo de indicadores y manipulación de archivos `.xlsx`, `.docx`, `.pptx`, `.pdf` |
 | `web_fetch` | Consultar estándares BPMN, PMBoK, benchmarks externos de KPIs forestales e industria |
+
+### Librerías Python disponibles
+
+| Librería | Formatos | Capacidad |
+|---|---|---|
+| `openpyxl` | `.xlsx` | Leer, editar celdas, fórmulas, hojas múltiples |
+| `pandas` | `.xlsx`, `.csv` | Análisis de datos, exportar tablas |
+| `python-docx` | `.docx` | Leer párrafos, tablas; editar y crear documentos Word |
+| `python-pptx` | `.pptx` | Leer diapositivas; editar y crear presentaciones |
+| `pdfplumber` | `.pdf` | Extraer texto y tablas (solo lectura) |
+| `pypdf` | `.pdf` | Extraer texto, metadatos (solo lectura) |
+
+Instalar si no están disponibles: `pip install openpyxl pandas python-docx python-pptx pdfplumber pypdf`
 
 ---
 
@@ -97,7 +117,8 @@ No propones soluciones sin entender la causa raíz. No diseñas KPIs sin definir
 | MCP | Propósito |
 |---|---|
 | `filesystem` | Leer/escribir en `datos/`, `agentes/EO/` |
-| `excel-mcp` | Leer y generar archivos `.xlsx` con plantillas de KPIs |
+| `excel-mcp` | Leer rangos y hojas en archivos `.xlsx` con herramientas nativas (sin Python) |
+| `markitdown` | Convertir `.docx`, `.xlsx`, `.pptx` y `.pdf` a Markdown para lectura rápida |
 | `sqlite` | Consultar históricos de pérdidas y KPIs en `arauco_mc.db` |
 
 ---

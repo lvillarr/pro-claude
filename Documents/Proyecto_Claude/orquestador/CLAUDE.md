@@ -173,8 +173,47 @@ Una vez recibidos los resultados:
 
 ## Skills del orquestador
 
-- `arauco-context` — glosario, convenciones, sistemas corporativos
-- `docx-report` — generación del informe ejecutivo consolidado
-- `delegation-protocol` — protocolo de delegación y consolidación definido en este CLAUDE.md
-- `business-case` — estructuración de casos de negocio con impacto cuantificado
-- `strategic-synthesis` — síntesis ejecutiva estilo consultoría (pirámide de Minto)
+| Skill | Descripción |
+|---|---|
+| `arauco-context` | Glosario, convenciones, sistemas corporativos |
+| `delegation-protocol` | Protocolo de delegación y consolidación definido en este CLAUDE.md |
+| `business-case` | Estructuración de casos de negocio con impacto cuantificado |
+| `strategic-synthesis` | Síntesis ejecutiva estilo consultoría (pirámide de Minto) |
+| `spec` | Encuadre del problema de negocio antes de delegar: mandato MECE, hipótesis, agentes y entregable — ver `orquestador/skills/spec/SKILL.md` |
+| `plan` | Plan de delegación: instrucciones precisas por agente, secuencia, dependencias y protocolo de consolidación — ver `orquestador/skills/plan/SKILL.md` |
+| `review` | Síntesis y control de calidad: integrar outputs de agentes, verificar coherencia, estructurar con pirámide de Minto — ver `orquestador/skills/review/SKILL.md` |
+| `ship` | Entrega ejecutiva final: generar informe o presentación consolidada, versionar en git, presentar al usuario — ver `orquestador/skills/ship/SKILL.md` |
+| `office-files` | Leer inputs del usuario (`.xlsx`, `.docx`, `.pptx`, `.pdf`) y generar entregables ejecutivos en formatos de oficina — ver `orquestador/skills/office-files/SKILL.md` |
+
+---
+
+## Tools disponibles
+
+| Tool | Uso principal |
+|---|---|
+| `task` | Lanza subagentes IA, TD y EO (paralelo o serie según dependencias) |
+| `list_dir` | Descubre archivos en `datos/` antes de delegar |
+| `read_file` | Lee outputs de agentes para consolidar |
+| `write_file` | Genera entregables ejecutivos finales |
+| `bash` | Ejecuta git commit y Python para generar DOCX/PPTX consolidados |
+| `python` | Genera informes ejecutivos en `.docx` y `.pptx` con python-docx y python-pptx |
+
+### Librerías Python para entregables ejecutivos
+
+| Librería | Propósito |
+|---|---|
+| `python-docx` | Generar informes ejecutivos consolidados en `.docx` |
+| `python-pptx` | Generar presentaciones gerenciales en `.pptx` |
+| `openpyxl` | Generar tablas consolidadas de iniciativas en `.xlsx` |
+| `pdfplumber` | Leer documentos de negocio enviados por el usuario en `.pdf` |
+
+---
+
+## MCP Servers configurados
+
+| MCP | Propósito |
+|---|---|
+| `filesystem` | Acceso completo al árbol del proyecto |
+| `markitdown` | Leer cualquier archivo de oficina enviado por el usuario (.docx, .xlsx, .pptx, .pdf) |
+| `excel-mcp` | Leer tablas de datos en `.xlsx` para consolidar en el informe |
+| `git` | Versiona entregables finales |
