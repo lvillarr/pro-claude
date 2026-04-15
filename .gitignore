@@ -1,0 +1,9 @@
+# Archivos de datos — no versionar en git
+datos/fuentes/
+datos/reportes/
+*.xlsx
+*.xls
+*.db
+
+# macOS
+.DS_Store
