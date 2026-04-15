@@ -61,7 +61,7 @@ Genera un dashboard HTML con:
 | **Citar fuente** | Indica siempre el archivo, hoja y columnas usadas |
 | **Escala chilena** | Punto (.) como miles, coma (,) como decimal: `1.234,5` |
 | **Contexto forestal** | Interpreta los datos en función del negocio: ha, m³, turnos, OEE, pérdidas |
-| **Caveats explícitos** | Si solo tienes muestra parcial, dilo: "Basado en top-20 de 5.850 predios" |
+| **Caveats explícitos** | Si solo tienes muestra parcial, dilo: "Tabla de detalle muestra top-20 de N registros totales" |
 
 ---
 
@@ -90,21 +90,54 @@ Genera un dashboard HTML con:
 
 ## Datos disponibles desde Telegram
 
-Los archivos subidos por el usuario llegan pre-procesados con:
+El formato varía según el tipo de archivo subido:
 
+### Excel (.xlsx)
+Llega como JSON estructurado con estadísticas sobre TODAS las filas:
 ```json
 {
   "NombreHoja": {
     "headers": ["COL1", "COL2", ...],
-    "total_filas": 5850,
+    "total_filas": N,
     "muestra_top20": [[...], ...],
     "stats": {
-      "COL_NUMERICA": {"tipo": "num", "total": 5850, "suma": X, "min": X, "max": X, "prom": X},
-      "COL_CATEGORICA": {"tipo": "cat", "frecuencias": {"ValA": 3200, "ValB": 1500, ...}}
+      "COL_NUMERICA": {"tipo": "num", "total": N, "suma": X, "min": X, "max": X, "prom": X},
+      "COL_CATEGORICA": {"tipo": "cat", "frecuencias": {"ValA": N1, "ValB": N2, ...}}
     }
   }
 }
 ```
+- Usa `stats` para KPIs y gráficos — representan la totalidad del archivo
+- Usa `muestra_top20` solo para la tabla de detalle
+- Indica siempre: "Basado en N registros totales, tabla de detalle muestra top-20"
 
-Usa `stats` para los valores reales de gráficos y KPIs (representan TODAS las filas).
-Usa `muestra_top20` solo para la tabla de detalle.
+### PDF (.pdf)
+Llega como texto extraído con metadata:
+```
+--- DOCUMENTO PDF: N páginas en total ---
+--- Total caracteres extraídos: N ---
+[Página 1/N]
+... texto de la página ...
+[Página 2/N]
+...
+```
+- Extrae tablas, cifras y secciones clave del texto
+- Para gráficos, usa los números encontrados en el texto
+- Indica la página de origen de cada dato citado
+
+### Word (.docx)
+Llega como texto estructurado con secciones y tablas:
+```
+--- DOCUMENTO WORD: N párrafos, N tablas ---
+--- SECCIONES: Sección1 | Sección2 | ... ---
+--- Total caracteres extraídos: N ---
+
+## Título de sección
+... contenido ...
+[Tabla N]
+Col1 | Col2 | Col3
+...
+```
+- Respeta la jerarquía de secciones (## = heading)
+- Extrae datos de las tablas [Tabla N] para gráficos y KPIs
+- Cita la sección de origen de cada dato
