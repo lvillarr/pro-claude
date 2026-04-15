@@ -44,12 +44,14 @@ nulos por columna: {col: n, ...}
 - Cruces relevantes según el contexto del negocio
 
 ### Paso 4 — Reporte HTML interactivo
-Genera un dashboard HTML con:
-- **KPI cards** en la parte superior (totales, promedios, % clave)
-- **Gráficos Chart.js** — barras para rankings, torta/dona para distribuciones categóricas, línea para series temporales
-- **Filtros dinámicos** — dropdowns JavaScript sobre las columnas categóricas principales
-- **Tabla de datos** filtrable y ordenable con los campos más relevantes
-- **Notas metodológicas** — fuente, fecha, caveats
+Genera un dashboard HTML con el sistema de diseño Arauco:
+- **Header** — logo blanco sobre `#696158`, título y subtítulo con fecha
+- **KPI cards** — `.grid.grid-4`, valor grande (`font-size:2rem; font-weight:900`), label en mayúscula, cambio con `.kpi-change.positive/negative/neutral`
+- **Filtros** — `.filtros-bar` con `<select>` por columna categórica, botón limpiar naranja, contador de registros
+- **Gráficos** — mínimo 2 Chart.js; usa D3.js o SVG para gauges/treemaps cuando aplique
+- **Tabla filtrable** — header `#696158`, filas alternas `#EDEAE6`, badges `.badge-ok/.badge-alerta/.badge-null`
+- **Títulos de sección** — `.section-title` con borde izquierdo `#BFB800`
+- **Filtros 100% dinámicos**: al cambiar cualquier select → actualiza tabla + todos los gráficos vía `chart.update()`
 
 ---
 
