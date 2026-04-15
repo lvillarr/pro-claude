@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Predios Online — Arauco Subgerencia Mejora Continua</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Lato', sans-serif; letter-spacing: -0.02em; background: #F5F2EC; color: #696158; min-height: 100vh; }
+
+  /* NAVBAR */
+  .navbar { background: #696158; padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(105,97,88,0.18); position: sticky; top: 0; z-index: 100; }
+  .navbar-left { display: flex; align-items: center; gap: 20px; }
+  .navbar-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.25); }
+  .navbar-title { color: #DFD1A7; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .navbar-subtitle { color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 300; margin-top: 1px; }
+  .navbar-badge { background: #EA7600; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.04em; }
+  .navbar-date { color: rgba(255,255,255,0.55); font-size: 12px; font-weight: 300; }
+
+  /* LAYOUT */
+  .main { max-width: 1280px; margin: 0 auto; padding: 28px 28px 48px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #BFB800; margin-bottom: 4px; }
+  .section-title { font-size: 22px; font-weight: 900; color: #696158; margin-bottom: 20px; }
+
+  /* ALERT */
+  .alert { background: linear-gradient(135deg,#EA7600,#c96200); border-radius: 14px; padding: 14px 22px; display: flex; align-items: center; gap: 14px; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(234,118,0,0.22); }
+  .alert-icon { font-size: 22px; flex-shrink: 0; }
+  .alert-text { color: #fff; font-size: 14px; line-height: 1.5; }
+  .alert-text strong { font-weight: 900; }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 16px; margin-bottom: 28px; }
+  .kpi { background: #fff; border-radius: 16px; padding: 22px 20px 18px; box-shadow: 0 2px 12px rgba(105,97,88,0.10); border-top: 4px solid #DFD1A7; position: relative; overflow: hidden; transition: transform .18s,box-shadow .18s; }
+  .kpi:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(105,97,88,0.15); }
+  .kpi.cr { border-top-color: #EA7600; }
+  .kpi.wn { border-top-color: #BFB800; }
+  .kpi.nt { border-top-color: #696158; }
+  .kpi-icon { position: absolute; top: 16px; right: 16px; font-size: 22px; opacity: .13; }
+  .kpi-lbl { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9e9489; margin-bottom: 8px; }
+  .kpi-val { font-size: 34px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .kpi.cr .kpi-val { color: #EA7600; }
+  .kpi.wn .kpi-val { color: #BFB800; }
+  .kpi.nt .kpi-val { color: #696158; }
+  .kpi-sub { font-size: 12px; color: #9e9489; }
+
+  /* GRID */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .three-col { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px; }
+  @media(max-width:900px){.two-col,.three-col{grid-template-columns:1fr;}}
+
+  /* CARD */
+  .card { background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(105,97,88,0.10); }
+  .card-title { font-size: 15px; font-weight: 700; color: #696158; margin-bottom: 4px; }
+  .card-sub { font-size: 12px; color: #a09891; font-weight: 300; margin-bottom: 18px; }
+  .chart-wrap { position: relative; height: 260px; }
+  .chart-wrap-sm { position: relative; height: 240px; }
+  .full { margin-bottom: 24px; }
+
+  /* PROGRESS */
+  .prog-wrap { margin-bottom: 14px; }
+  .prog-lbl { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #696158; }
+  .prog-track { height: 10px; background: #DFD1A7; border-radius: 20px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 20px; }
+
+  /* PILLS */
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .pill-muy-alto { background: #fde8d8; color: #EA7600; }
+  .pill-alto     { background: #fff3cd; color: #b07d00; }
+  .pill-medio    { background: #eaf5e0; color: #6a9a2c; }
+  .pill-bajo     { background: #e8f0fb; color: #3b6dbf; }
+  .pill-si       { background: #fde8d8; color: #EA7600; }
+  .pill-no       { background: #eaf5e0; color: #6a9a2c; }
+
+  /* TABLE */
+  .tbl-wrap { overflow-x: auto; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead tr { background: #696158; color: #fff; }
+  thead th { padding: 10px 14px; text-align: left; font-weight: 700; white-space: nowrap; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+  tbody td { padding: 9px 14px; border-bottom: 1px solid #DFD1A7; vertical-align: middle; }
+  tbody tr:nth-child(odd)  { background: #fff; }
+  tbody tr:nth-child(even) { background: #DFD1A7; }
+  tbody tr:hover { background: #ede6d6; }
+  td.num { font-weight: 700; text-align: right; }
+  td.pct { font-size: 12px; color: #9e9489; text-align: right; }
+
+  /* FOOTER */
+  .footer { background: #696158; color: rgba(255,255,255,.5); font-size: 11px; text-align: center; padding: 16px 32px; margin-top: 16px; letter-spacing: .04em; }
+  .footer span { color: #BFB800; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-left">
+    <img src="https://arauco.com/chile/wp-content/themes/arauco/assets/img/logo-arauco-blanco.png" alt="Arauco" height="32">
+    <div class="navbar-divider"></div>
+    <div>
+      <div class="navbar-title">Predios Online — Catastro Predial Chile</div>
+      <div class="navbar-subtitle">Subgerencia de Mejora Continua · Sistema Araucaria GIS</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="navbar-badge">5.850 PREDIOS</span>
+    <span class="navbar-date" id="fecha"></span>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- ALERT -->
+  <div class="alert">
+    <div class="alert-icon">🔥</div>
+    <div class="alert-text">
+      <strong>ALERTA OPERACIONAL:</strong> 747 predios (12,8%) están en riesgo de incendio <strong>Muy Alto</strong> y 886 (15,1%) en <strong>Alto</strong> — un total de 317.959 ha expuestas a riesgo elevado. Constitución y Chillán concentran el mayor riesgo con PTS obligatorio en +90% de sus predios.
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="section-label">Resumen ejecutivo</div>
+  <div class="section-title">Indicadores Clave del Catastro — Chile</div>
+  <div class="kpi-grid">
+    <div class="kpi nt">
+      <div class="kpi-icon">🌲</div>
+      <div class="kpi-lbl">Total Predios Chile</div>
+      <div class="kpi-val">5.850</div>
+      <div class="kpi-sub">5 zonas operacionales activas</div>
+    </div>
+    <div class="kpi nt">
+      <div class="kpi-icon">📐</div>
+      <div class="kpi-lbl">Superficie Total</div>
+      <div class="kpi-val">1,5M</div>
+      <div class="kpi-sub">1.499.345 ha registradas en GIS</div>
+    </div>
+    <div class="kpi cr">
+      <div class="kpi-icon">🔥</div>
+      <div class="kpi-lbl">Riesgo Muy Alto</div>
+      <div class="kpi-val">747</div>
+      <div class="kpi-sub">140.926 ha · 13,0% de sup. con dato</div>
+    </div>
+    <div class="kpi wn">
+      <div class="kpi-icon">⚠️</div>
+      <div class="kpi-lbl">Riesgo Alto</div>
+      <div class="kpi-val">886</div>
+      <div class="kpi-sub">177.033 ha · 16,3% de sup. con dato</div>
+    </div>
+    <div class="kpi cr">
+      <div class="kpi-icon">🔒</div>
+      <div class="kpi-lbl">PTS Obligatorio — Chillán</div>
+      <div class="kpi-val">92%</div>
+      <div class="kpi-sub">1.265 de 1.369 predios</div>
+    </div>
+    <div class="kpi cr">
+      <div class="kpi-icon">🚫</div>
+      <div class="kpi-lbl">PTS Obligatorio — Constitución</div>
+      <div class="kpi-val">100%</div>
+      <div class="kpi-sub">1.193 predios sin excepción</div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 1 -->
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Predios y Superficie por Zona</div>
+      <div class="card-sub">Hectáreas registradas en Sistema Araucaria GIS</div>
+      <div class="chart-wrap"><canvas id="cZona"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Distribución Riesgo de Incendio</div>
+      <div class="card-sub">% de superficie con nivel de riesgo clasificado (1.082.703 ha)</div>
+      <div class="chart-wrap"><canvas id="cRiesgo"></canvas></div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 2 -->
+  <div class="three-col">
+    <div class="card">
+      <div class="card-title">Predios por Nivel de Riesgo — Chillán</div>
+      <div class="card-sub">Distribución de los 1.369 predios de la zona Chillán</div>
+      <div class="chart-wrap"><canvas id="cChillan"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Exposición al Riesgo — Chile</div>
+      <div class="card-sub">% superficie con clasificación de riesgo</div>
+      <div style="margin-top:12px;">
+        <div class="prog-wrap">
+          <div class="prog-lbl"><span>🔴 Muy Alto</span><span>13,0%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:13%;background:#EA7600;"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-lbl"><span>🟡 Alto</span><span>16,3%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:16.3%;background:#BFB800;"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-lbl"><span>🟠 Medio</span><span>26,9%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:26.9%;background:#c96200;"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-lbl"><span>🟢 Bajo</span><span>43,7%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:43.7%;background:#6a9a2c;"></div></div>
+        </div>
+        <div style="margin-top:20px;padding:14px;background:#fde8d8;border-radius:10px;border-left:4px solid #EA7600;">
+          <div style="font-size:11px;font-weight:700;color:#EA7600;margin-bottom:4px;">⚠ SUPERFICIE EN RIESGO ELEVADO</div>
+          <div style="font-size:28px;font-weight:900;color:#EA7600;">29,3%</div>
+          <div style="font-size:12px;color:#9e6030;margin-top:2px;">317.959 ha en riesgo Alto o Muy Alto</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA TOP 15 CHILLÁN -->
+  <div class="card full">
+    <div class="card-title">Top 15 Predios Chillán — Mayor Superficie</div>
+    <div class="card-sub">Zona Chillán · 1.369 predios · 292.154 ha · Fuente: Predios_Online.xlsx — Sistema Araucaria GIS</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Predio</th>
+            <th>Área / Sector</th>
+            <th>Comuna</th>
+            <th>Superficie (ha)</th>
+            <th>% Zona</th>
+            <th>Riesgo Incendio</th>
+            <th>PTS Obligatorio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-weight:700;color:#BFB800;">1</td><td style="font-weight:700;">CUARTA HJ.</td><td>Cordillera de Huemules</td><td>Coihueco</td><td class="num">5.500,92</td><td class="pct">1,88%</td><td><span class="pill pill-bajo">Bajo</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">2</td><td style="font-weight:700;">OL-LAS CRUCES</td><td>Arenales de Cholguán</td><td>Yungay</td><td class="num">4.600,51</td><td class="pct">1,57%</td><td><span class="pill pill-bajo">Bajo</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">3</td><td style="font-weight:700;">EL SAUCE-CHOLGUAN</td><td>Cordillera de Huemules</td><td>Coihueco</td><td class="num">4.258,63</td><td class="pct">1,46%</td><td><span class="pill pill-bajo">Bajo</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">4</td><td style="font-weight:700;">EL CACIQUE FBB</td><td>Secanos de Ñuble</td><td>Pemuco</td><td class="num">3.329,98</td><td class="pct">1,14%</td><td><span class="pill pill-medio">Medio</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">5</td><td style="font-weight:700;">SN MANUEL FBB</td><td>Secanos de Ñuble</td><td>Yungay</td><td class="num">3.318,75</td><td class="pct">1,14%</td><td><span class="pill pill-bajo">Bajo</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">6</td><td style="font-weight:700;">CONUCO</td><td>Costa de Queules</td><td>Tomé</td><td class="num">3.080,56</td><td class="pct">1,05%</td><td><span class="pill pill-alto">Alto</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">7</td><td style="font-weight:700;">JOSE MIGUEL CARRERA</td><td>Cordillera de Huemules</td><td>Coihueco</td><td class="num">2.899,54</td><td class="pct">0,99%</td><td><span class="pill pill-medio">Medio</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">8</td><td style="font-weight:700;">SN ISIDRO FBB</td><td>Cordillera de Huemules</td><td>Coihueco</td><td class="num">2.893,52</td><td class="pct">0,99%</td><td><span class="pill pill-alto">Alto</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">9</td><td style="font-weight:700;">VERANADA EL SAUCE</td><td>Cordillera de Huemules</td><td>Coihueco</td><td class="num">2.757,08</td><td class="pct">0,94%</td><td><span class="pill pill-bajo">Bajo</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">10</td><td style="font-weight:700;">CANTERAS FORESTAL-EL PEDREGAL</td><td>Canteras del Laja</td><td>Quilleco</td><td class="num">2.529,69</td><td class="pct">0,87%</td><td><span class="pill pill-alto">Alto</span></td><td><span class="pill pill-no">No</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">11</td><td style="font-weight:700;">EMI-QUILTEU</td><td>Costa de Queules</td><td>Coelemu</td><td class="num">2.518,40</td><td class="pct">0,86%</td><td><span class="pill pill-alto">Alto</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">12</td><td style="font-weight:700;">EL VALIENTE</td><td>Cordillera de Huemules</td><td>San Fabián</td><td class="num">2.418,15</td><td class="pct">0,83%</td><td><span class="pill pill-alto">Alto</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">13</td><td style="font-weight:700;">OL-TRINITARIAS Y OTROS BIOBIO</td><td>Robles de Coyanmahuida</td><td>Concepción</td><td class="num">2.258,94</td><td class="pct">0,77%</td><td><span class="pill pill-muy-alto">Muy Alto</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">14</td><td style="font-weight:700;">LOS QUEÑES SUR</td><td>Cordillera de Huemules</td><td>Coihueco</td><td class="num">2.175,40</td><td class="pct">0,74%</td><td><span class="pill pill-bajo">Bajo</span></td><td><span class="pill pill-si">Sí</span></td></tr>
+          <tr><td style="font-weight:700;color:#BFB800;">15</td><td style="font-weight:700;">CANTERAS FORESTAL-HUMENCO</td><td>Canteras del Laja</td><td>Quilleco</td><td class="num">2.089,12</td><td class="pct">0,71%</td><td><span class="pill pill-muy-alto">Muy Alto</span></td><td><span class="pill pill-no">No</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TABLA RESUMEN POR ZONA -->
+  <div class="card full">
+    <div class="card-title">Resumen Operacional por Zona</div>
+    <div class="card-sub">Consolidado de 5.850 predios Chile · Fuente: Predios_Online.xlsx</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Predios</th>
+            <th>Superficie (ha)</th>
+            <th>Riesgo Muy Alto</th>
+            <th>Riesgo Alto</th>
+            <th>Riesgo Medio</th>
+            <th>Riesgo Bajo</th>
+            <th>PTS Obligatorio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:700;">Arauco</td>
+            <td class="num">1.069</td>
+            <td class="num">309.249,68</td>
+            <td style="color:#EA7600;font-weight:700;text-align:center;">280</td>
+            <td style="color:#b07d00;font-weight:700;text-align:center;">241</td>
+            <td style="text-align:center;">265</td>
+            <td style="color:#6a9a2c;text-align:center;">280</td>
+            <td style="text-align:center;"><span class="pill pill-bajo">315 (29,5%)</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;">Chillán</td>
+            <td class="num">1.369</td>
+            <td class="num">292.154,76</td>
+            <td style="color:#EA7600;font-weight:700;text-align:center;">413</td>
+            <td style="color:#b07d00;font-weight:700;text-align:center;">337</td>
+            <td style="text-align:center;">312</td>
+            <td style="color:#6a9a2c;text-align:center;">305</td>
+            <td style="text-align:center;"><span class="pill pill-si">1.265 (92,4%)</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;">Constitución</td>
+            <td class="num">1.193</td>
+            <td class="num">245.931,47</td>
+            <td style="color:#EA7600;font-weight:700;text-align:center;">46</td>
+            <td style="color:#b07d00;font-weight:700;text-align:center;">212</td>
+            <td style="text-align:center;">416</td>
+            <td style="color:#6a9a2c;text-align:center;">519</td>
+            <td style="text-align:center;"><span class="pill pill-si">1.193 (100%)</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;">Valdivia</td>
+            <td class="num">1.823</td>
+            <td class="num">236.793,48</td>
+            <td style="color:#EA7600;font-weight:700;text-align:center;">8</td>
+            <td style="color:#b07d00;font-weight:700;text-align:center;">96</td>
+            <td style="text-align:center;">654</td>
+            <td style="color:#6a9a2c;text-align:center;">1.061</td>
+            <td style="text-align:center;"><span class="pill pill-bajo">336 (18,4%)</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;">Región Norte</td>
+            <td class="num">297</td>
+            <td class="num">234.160,94</td>
+            <td style="text-align:center;color:#9e9489;">—</td>
+            <td style="text-align:center;color:#9e9489;">—</td>
+            <td style="text-align:center;color:#9e9489;">—</td>
+            <td style="text-align:center;color:#9e9489;">—</td>
+            <td style="text-align:center;"><span class="pill" style="background:#ece9e4;color:#696158;">Sin dato</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;">Región Centro</td>
+            <td class="num">9</td>
+            <td class="num">29.650,49</td>
+            <td style="text-align:center;color:#9e9489;">—</td>
+            <td style="text-align:center;color:#9e9489;">—</td>
+            <td style="text-align:center;color:#9e9489;">—</td>
+            <td style="text-align:center;color:#9e9489;">—</td>
+            <td style="text-align:center;"><span class="pill" style="background:#ece9e4;color:#696158;">Sin dato</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  <span>ARAUCO</span> · Subgerencia de Mejora Continua · Sistema Araucaria GIS ·
+  Fuente: Predios_Online.xlsx · <span id="fecha2"></span>
+</div>
+
+<script>
+// Fecha actual
+const hoy = new Date().toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'});
+document.getElementById('fecha').textContent = hoy;
+document.getElementById('fecha2').textContent = hoy;
+
+// Chart 1: Superficie por zona (barras)
+new Chart(document.getElementById('cZona'), {
+  type: 'bar',
+  data: {
+    labels: ['Arauco','Chillán','Constitución','Valdivia','R. Norte','R. Centro'],
+    datasets: [{
+      label: 'Superficie (ha)',
+      data: [309249.68, 292154.76, 245931.47, 236793.48, 234160.94, 29650.49],
+      backgroundColor: ['#696158','#EA7600','#BFB800','#6a9a2c','#9e9489','#DFD1A7'],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { callback: v => (v/1000).toFixed(0)+'k', font:{family:'Lato',size:11} }, grid:{ color:'#f0ece6' } },
+      x: { ticks: { font:{family:'Lato',size:11} }, grid:{ display:false } }
+    }
+  }
+});
+
+// Chart 2: Riesgo donut (superficie %)
+new Chart(document.getElementById('cRiesgo'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Muy Alto','Alto','Medio','Bajo'],
+    datasets: [{
+      data: [13.0, 16.3, 26.9, 43.7],
+      backgroundColor: ['#EA7600','#BFB800','#c96200','#6a9a2c'],
+      borderWidth: 3, borderColor: '#fff',
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position:'right', labels:{ font:{family:'Lato',size:12}, padding:14 } },
+      tooltip: { callbacks:{ label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } }
+    },
+    cutout: '62%'
+  }
+});
+
+// Chart 3: Chillán por riesgo
+new Chart(document.getElementById('cChillan'), {
+  type: 'bar',
+  data: {
+    labels: ['Muy Alto','Alto','Medio','Bajo','Sin dato'],
+    datasets: [{
+      label: 'Predios',
+      data: [413, 337, 312, 305, 2],
+      backgroundColor: ['#EA7600','#BFB800','#c96200','#6a9a2c','#DFD1A7'],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend:{ display:false } },
+    scales: {
+      y: { ticks:{ font:{family:'Lato',size:11} }, grid:{ color:'#f0ece6' } },
+      x: { ticks:{ font:{family:'Lato',size:11} }, grid:{ display:false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
