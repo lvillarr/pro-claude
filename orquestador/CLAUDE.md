@@ -79,14 +79,24 @@ Plazo: inmediato / iteración siguiente
 - Presenta: **contexto → hallazgos clave → recomendaciones → próximos pasos**
 
 ### Paso 3.5 — Validación antes de entregar
-Antes de presentar al usuario, verificar:
-- [ ] ¿La hipótesis inicial fue respondida (confirmada, refutada o ajustada)?
-- [ ] ¿Los datos son suficientes para las recomendaciones? Si no, indicarlo explícitamente
-- [ ] ¿Hay inconsistencias entre los outputs de los agentes? Señalarlas, no ignorarlas
-- [ ] ¿El entregable responde: problema → hallazgo → recomendación → próximo paso?
-- [ ] ¿Las cifras tienen fuente? ¿Los supuestos están explícitos?
 
-Si algún punto falla: detener, replantear la delegación o escalar al usuario — no avanzar a la fuerza.
+**Checklist de integridad:**
+- [ ] ¿La hipótesis inicial fue respondida (confirmada, refutada o ajustada)?
+- [ ] ¿Las cifras tienen fuente? ¿Los supuestos están explícitos?
+- [ ] ¿El entregable responde: problema → hallazgo → recomendación → próximo paso?
+
+**Checklist por agente** (verificar en cada ENTREGA recibida):
+
+| Agente | Campo obligatorio | Señal de alerta |
+|---|---|---|
+| **EO** | Hallazgos clave + Causa raíz + Limitaciones + Plan de acción | Falta causa raíz o plan sin responsable |
+| **TD** | Estado + Dependencias + Limitaciones + Impacto esperado | Estado "en desarrollo" sin plazo ni bloqueador |
+| **IA** | Hallazgos clave + Limitaciones + Impacto esperado | Limitaciones vacías o confianza no declarada |
+| **DA** | Fuente del archivo + Caveats de muestra | Cifras sin origen o sin indicar total de registros |
+
+**Si algún campo falta:** solicitar al agente que complete antes de sintetizar — no inferir ni completar por cuenta propia.
+
+Si algún punto del checklist falla: detener, replantear la delegación o escalar al usuario — no avanzar a la fuerza.
 
 ---
 
