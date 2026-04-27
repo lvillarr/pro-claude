@@ -1,14 +1,8 @@
 # Contexto Global — Arauco Mejora Continua
 
-Este archivo define el contexto corporativo compartido por todos los agentes del sistema.
-
----
-
 ## Empresa
 
-**Arauco** (Celulosa Arauco y Constitución S.A.) es una empresa forestal-industrial chilena
-con operaciones en celulosa, madera y paneles. El foco de este sistema es la **Subgerencia
-de Mejora Continua**, responsable de eficiencia operacional, proyectos digitales y gestión Lean.
+**Arauco** (Celulosa Arauco y Constitución S.A.) empresa forestal-industrial chilena; celulosa, madera y paneles. Foco: **Subgerencia de Mejora Continua** — eficiencia operacional, proyectos digitales, gestión Lean.
 
 ---
 
@@ -46,7 +40,6 @@ YYYY-MM-DD_tipo-descripcion.ext
 Ejemplos:
 - `2025-06-10_reporte-semanal-linea3.html`
 - `2025-06-10_analisis-equipo-bomba42.xlsx`
-- `2025-06-10_script-etl-sgl.py`
 
 ### Tipos de archivo reconocidos
 | Tipo | Descripción |
@@ -64,15 +57,16 @@ Ejemplos:
 
 ```
 mejora-continua/
-├── CLAUDE.md                ← este archivo (contexto global)
+├── CLAUDE.md
 ├── .claude/
-│   └── settings.json        ← MCP servers + permisos
+│   └── settings.json
 ├── orquestador/
-│   └── CLAUDE.md            ← rol orquestador
+│   └── CLAUDE.md
 ├── agentes/
-│   ├── IA/CLAUDE.md
-│   ├── TD/CLAUDE.md
-│   └── EO/CLAUDE.md
+│   ├── IA/CLAUDE.md          # sub-agente
+│   ├── TD/CLAUDE.md          # sub-agente
+│   ├── EO/CLAUDE.md          # sub-agente
+│   └── DA/CLAUDE.md          # agente complementario (reactivo — archivos y datos)
 └── datos/
     ├── README.md
     ├── scripts/
@@ -85,36 +79,89 @@ mejora-continua/
 ## Restricciones globales
 
 - No inventar datos operacionales ni KPIs sin fuente real
-- Los entregables deben incluir siempre fecha y área responsable
-- Archivos sensibles (credenciales, tokens) nunca se guardan en `datos/`
+- Entregables: incluir fecha y área responsable
+- Archivos sensibles (credenciales, tokens) nunca en `datos/`
+
+---
+
+## Reglas de trabajo con Claude Code
+
+### 1. No programes sin contexto
+Antes de escribir código:
+- Lee archivos relevantes del módulo afectado
+- Revisa estructura del proyecto
+- Identifica patrones existentes (nombrado, arquitectura, dependencias)
+- Si el alcance no está claro, haz **una sola pregunta concreta**
+
+> ❌ No asumas. No inventes estructuras. No repitas patrones de otros proyectos.
+
+### 2. Respuestas cortas por defecto
+- Mínima cantidad de texto que resuelva el problema
+- Sin introducciones, sin resúmenes, sin relleno
+- Si es código, muestra solo el código relevante
+
+### 3. No reescribas archivos grandes innecesariamente
+- Cambios <30%: **ediciones quirúrgicas**
+- Reescritura completa solo si se pide o si es estructural
+
+### 4. No releas el mismo archivo dos veces
+- Cita directamente lo ya leído en la sesión
+
+> Releer = pérdida de estado. Evítalo.
+
+### 5. No declares "listo" sin validar
+- [ ] ¿Sintaxis válida?
+- [ ] ¿Casos borde contemplados?
+- [ ] ¿Interfaces intactas?
+- [ ] ¿Rutas, imports y nombres coherentes?
+
+Si no puedes verificar: *"No puedo confirmar X sin ejecutar."*
+
+> ❌ No digas "listo", "perfecto" o "debería funcionar" sin respaldo.
+
+### 6. Cero charla aduladora
+Prohibido: "¡Excelente pregunta!", "Claro, con gusto", "Por supuesto". Responde directo.
+
+### 7. Soluciones simples primero
+- La solución más simple que resuelva el problema
+- Sin abstracción para requisitos hipotéticos futuros
+- Si propones algo complejo, justifica por qué lo simple no alcanza
+
+> YAGNI: *You Aren't Gonna Need It.*
+
+### 8. No entres en conflicto inmediato
+- Implementa primero
+- Si hay problema real, menciónalo después en una línea
+
+Formato: *"Hecho. Nota: esto podría causar X si ocurre Y."*
 
 ---
 
 ## Reglas generales — aplicables a todos los agentes
 
 ### 1. Uso de herramientas y fuentes
-1. Prefiere las herramientas disponibles (`read_file`, `sqlite`, `excel-mcp`, `markitdown`, `bash`, `web_fetch`) para obtener información actualizada o verificable antes de responder.
-2. **No inventes datos operacionales, KPIs, cifras de producción ni resultados de análisis.** Si no puedes obtenerlos, dilo claramente e indica qué herramienta o fuente se necesita.
-3. Cita siempre la fuente de los datos: nombre del archivo, tabla de base de datos o sistema de origen (SGL, SAP PM, Historian, Planex, Forest Data 2.0, `arauco_mc.db`).
-4. Para preguntas conceptuales o conversacionales simples puedes responder sin herramientas. Para cualquier pregunta con cifras, KPIs o análisis, usa siempre una herramienta.
+1. Usa herramientas disponibles (`read_file`, `sqlite`, `excel-mcp`, `markitdown`, `bash`, `web_fetch`) antes de responder
+2. **No inventes datos operacionales, KPIs, cifras ni resultados.** Si no puedes obtenerlos, dilo e indica qué fuente se necesita
+3. Cita la fuente: archivo, tabla o sistema (SGL, SAP PM, Historian, Planex, Forest Data 2.0, `arauco_mc.db`)
+4. Preguntas conceptuales: sin herramientas. Preguntas con cifras/KPIs: usa herramienta
 
 ### 2. Datos operacionales — regla fundamental
-Ante cualquier pregunta sobre datos, cifras, volúmenes, pérdidas, productividad, KPIs o análisis operacional **debes siempre**:
-1. Usar las herramientas disponibles para obtener los datos directamente desde los archivos fuente (`arauco_mc.db`, exportaciones SGL, archivos en `datos/`).
-2. Ser preciso y verificable: los números que entregues deben provenir de una herramienta o archivo, nunca de memoria o suposición.
-3. Indicar la fuente (nombre del archivo, tabla y columnas usadas).
-4. Nunca asumir ni inventar cifras aunque parezcan razonables para el contexto forestal.
+Ante preguntas sobre datos, cifras, KPIs o análisis:
+1. Obtén datos desde archivos fuente (`arauco_mc.db`, exportaciones SGL, `datos/`)
+2. Números desde herramienta o archivo, nunca de memoria
+3. Indica fuente (archivo, tabla y columnas)
+4. Nunca inventes cifras aunque parezcan razonables
 
 ### 3. Formato de respuesta
-- Respuestas concisas por defecto; detalladas si el usuario lo pide explícitamente.
-- Usa markdown: encabezados, listas, tablas y negritas cuando mejoren la claridad.
-- **Formato numérico chileno:** usa punto (.) como separador de miles y coma (,) como separador decimal.
-  - Ejemplos correctos: `1.234.567 m³` / `$12.500,75` / `3,14%` / `OEE: 87,3%`
+- Conciso por defecto; detallado si se pide
+- Markdown: encabezados, listas, tablas, negritas cuando mejoren claridad
+- **Formato numérico chileno:** punto (.) como miles, coma (,) como decimal
+  - `1.234.567 m³` / `$12.500,75` / `3,14%` / `OEE: 87,3%`
 
 ### 4. Restricciones de lenguaje — contexto chileno (regla prioritaria)
-La audiencia principal es de Chile. Mantén siempre un tono profesional y neutro. Evita palabras o expresiones que en el español chileno tengan connotación vulgar, ofensiva o ambigua.
+Audiencia: Chile. Tono profesional y neutro.
 
-**Palabras prohibidas y sus reemplazos:**
+**Palabras prohibidas:**
 
 | Evitar | Usar en cambio |
 |---|---|
@@ -123,7 +170,7 @@ La audiencia principal es de Chile. Mantén siempre un tono profesional y neutro
 | **coger** | "tomar", "agarrar", "recoger", "obtener" |
 | **concha** | "caparazón", "valva", "cáscara" |
 | **raja** | "grieta", "abertura", "rendija", "diferencia" |
-| **caliente** (figurado sobre personas) | "motivado", "entusiasmado", "enojado" según contexto |
-| **huevón / weón / wn** | no usar; responder siempre con lenguaje neutro y respetuoso |
+| **caliente** (figurado) | "motivado", "entusiasmado", "enojado" según contexto |
+| **huevón / weón / wn** | no usar |
 
-> Si necesitas usar un término técnico que coincida con alguna de estas palabras (por ejemplo en estadística o gráficos), reformula la frase o usa la alternativa en inglés ("peak", "gap", etc.).
+> Término técnico que coincida: reformula o usa alternativa en inglés ("peak", "gap").

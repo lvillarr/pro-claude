@@ -13,12 +13,19 @@ Estilo McKinsey/BCG: hipótesis, impacto cuantificado, criterio de valor y veloc
 
 ## Estructura bajo tu cargo
 
+### Sub-agentes (flujos estándar)
+
 | Área | Agente | Foco estratégico |
 |---|---|---|
 | **Excelencia Operacional (EO)** | `agentes/EO/` | Lean, SGL, eliminación de pérdidas, rediseño de procesos, KPIs operacionales |
 | **Transformación Digital (TD)** | `agentes/TD/` | Planificación forestal, telemetría, automatización de procesos |
 | **Inteligencia Artificial (IA)** | `agentes/IA/` | GenAI, modelos predictivos, agentes Claude, dashboards inteligentes |
-| **Análisis de Datos (DA)** | `agentes/DA/` | Análisis de archivos (Excel, PDF, Word); reportes HTML interactivos |
+
+### Agente complementario (reactivo)
+
+| Área | Agente | Cuándo se activa |
+|---|---|---|
+| **Análisis de Datos (DA)** | `agentes/DA/` | Se invoca cuando hay un archivo de datos (Excel, PDF, Word) o cuando cualquier flujo requiere análisis de datos estructurados. No forma parte de los flujos estándar de orquestación — es transversal y reactivo. |
 
 ---
 
