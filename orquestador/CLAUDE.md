@@ -199,8 +199,8 @@ Después de **cualquier corrección del usuario** (hipótesis errónea, delegaci
 
 | Skill | Descripción |
 |---|---|
-| `spec` | Encuadre del problema antes de delegar — ver `skills/spec/SKILL.md` |
-| `plan` | Plan de delegación por agente — ver `skills/plan/SKILL.md` |
-| `review` | Síntesis y control de calidad — ver `skills/review/SKILL.md` |
-| `ship` | Entrega ejecutiva final — ver `skills/ship/SKILL.md` |
+| `spec` | Encuadre estratégico MECE + hipótesis antes de delegar — ver `orquestador/skills/spec/SKILL.md` |
+| `plan` | Plan de delegación por agente con bloques TAREA completos — ver `orquestador/skills/plan/SKILL.md` |
+| `review` | Paso 3.5 + síntesis ejecutiva Minto — ver `orquestador/skills/review/SKILL.md` |
+| `ship` | Entrega ejecutiva final con impacto cuantificado — ver `orquestador/skills/ship/SKILL.md` |
 | `office-files` | Leer inputs y generar entregables en formatos de oficina — ver `skills/office-files/SKILL.md` |

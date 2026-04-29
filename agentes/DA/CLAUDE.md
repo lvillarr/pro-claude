@@ -82,12 +82,12 @@ Dashboard con sistema de diseño Arauco:
 
 | Skill | Descripción |
 |---|---|
-| `spec` | Especificación del análisis: pregunta de negocio, datos, métricas — ver `skills/spec/SKILL.md` |
-| `plan` | Plan: pasos, herramientas, supuestos — ver `skills/plan/SKILL.md` |
-| `build` | Ejecución del análisis y construcción del reporte — ver `skills/build/SKILL.md` |
-| `test` | Validación de resultados: coherencia estadística, KPIs vs. fuente, caveats — ver `skills/test/SKILL.md` |
-| `review` | Coherencia, caveats, alineación con el negocio — ver `skills/review/SKILL.md` |
-| `ship` | Entrega del reporte final: nombre de archivo, ubicación, hand-off — ver `skills/ship/SKILL.md` |
+| `spec` | Pregunta de negocio, archivo fuente, métricas, audiencia — ver `agentes/DA/skills/spec/SKILL.md` |
+| `plan` | Plan de inspección → limpieza → análisis → visualización — ver `agentes/DA/skills/plan/SKILL.md` |
+| `build` | Dashboard HTML interactivo con branding Arauco y filtros dinámicos — ver `agentes/DA/skills/build/SKILL.md` |
+| `test` | Coherencia KPIs vs. fuente, caveats completos, filtros funcionales — ver `agentes/DA/skills/test/SKILL.md` |
+| `review` | Alineación con negocio forestal, cifras verificables, terminología correcta — ver `agentes/DA/skills/review/SKILL.md` |
+| `ship` | Nombre de archivo, ENTREGA DA: completo, guardar en datos/ — ver `agentes/DA/skills/ship/SKILL.md` |
 | `office-files` | Lectura de `.xlsx`, `.docx`, `.pdf` — ver `skills/office-files/SKILL.md` |
 | `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para reportes HTML — ver `skills/branding-arauco/SKILL.md` |
 

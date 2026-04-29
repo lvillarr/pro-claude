@@ -108,7 +108,7 @@ Instalar: `pip install requests pandas sqlalchemy openpyxl python-docx python-pp
 |---|---|
 | `filesystem` | Leer/escribir en `datos/`, `agentes/TD/` |
 | `sqlite` | Consultar `datos/arauco_mc.db` y bases operacionales |
-| `timeseries-db` | Telemetría en tiempo real (InfluxDB, TimescaleDB) |
+| `timeseries-db` | Telemetría en tiempo real (InfluxDB, TimescaleDB) — requiere instalación externa |
 | `excel-mcp` | Leer rangos y hojas `.xlsx` |
 | `markitdown` | Convertir `.docx`, `.xlsx`, `.pptx`, `.pdf` a Markdown |
 | `git` | Versionar scripts y configuraciones |
