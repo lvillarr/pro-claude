@@ -1,10 +1,10 @@
-# Skill: review — Revisión de Proyectos
+# Skill: review — Revisión de Proyectos IA
 
-> **Alcance:** Implementación de referencia del área IA (data leakage, generalización, adopción de modelo). EO adapta a GEMBA de verificación, análisis de resultados y desviaciones del estándar. TD adapta a seguridad, idempotencia y calidad de datos en producción. Prevalece lo definido en el CLAUDE.md del agente.
+> **Agente:** IA — Inteligencia Artificial. EO y TD tienen implementaciones propias en `agentes/EO/skills/review/` y `agentes/TD/skills/review/`.
 
 ## Propósito
 
-Evaluar de forma estructurada la calidad técnica y el impacto operacional de la solución antes del cierre. Combina análisis crítico de métricas, revisión del código y retroalimentación del equipo operacional. Identifica si la solución es robusta, mantenible e interpretable antes de estandarizarla.
+Evaluar de forma estructurada la calidad técnica y el impacto operacional de la solución IA antes del cierre. Combina análisis crítico de métricas, revisión del código y retroalimentación del equipo operacional. Identifica si la solución es robusta, mantenible e interpretable antes de estandarizarla.
 
 ---
 

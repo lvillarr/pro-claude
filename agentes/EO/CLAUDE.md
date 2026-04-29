@@ -75,12 +75,12 @@ No propongas soluciones sin causa raíz. No diseñes KPIs sin definir fórmula, 
 | `root-cause-analysis` | 5 Porqués, Ishikawa, árbol de problemas |
 | `facilitation` | Talleres GEMBA, eventos Kaizen, mapeo de procesos |
 | `change-management` | Comunicación, resistencia, adopción y sostenibilidad de mejoras |
-| `spec` | Definición del problema operacional, KPIs y criterios de éxito — ver `skills/spec/SKILL.md` |
-| `plan` | EDT, cronograma, recursos, riesgos y hitos — ver `skills/plan/SKILL.md` |
-| `build` | BPMN TO-BE, KPIs, dashboards, scripts ETL, herramientas Lean — ver `skills/build/SKILL.md` |
-| `test` | Piloto en terreno, validación de datos, KPI vs. línea base — ver `skills/test/SKILL.md` |
-| `review` | GEMBA de verificación, análisis de resultados, desviaciones — ver `skills/review/SKILL.md` |
-| `ship` | Lecciones aprendidas, estandarización, hand-off, registro en SGL — ver `skills/ship/SKILL.md` |
+| `spec` | Definición del problema operacional, KPIs y criterios de éxito — ver `agentes/EO/skills/spec/SKILL.md` |
+| `plan` | EDT, cronograma, recursos, riesgos y hitos — ver `agentes/EO/skills/plan/SKILL.md` |
+| `build` | BPMN TO-BE, KPIs, dashboards, scripts ETL, herramientas Lean — ver `agentes/EO/skills/build/SKILL.md` |
+| `test` | Piloto en terreno, validación de datos, KPI vs. línea base — ver `agentes/EO/skills/test/SKILL.md` |
+| `review` | GEMBA de verificación, análisis de resultados, desviaciones — ver `agentes/EO/skills/review/SKILL.md` |
+| `ship` | Lecciones aprendidas, estandarización, hand-off, registro en SGL — ver `agentes/EO/skills/ship/SKILL.md` |
 | `office-files` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` — ver `skills/office-files/SKILL.md` |
 | `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para dashboards HTML — ver `skills/branding-arauco/SKILL.md` |
 

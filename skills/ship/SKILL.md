@@ -1,10 +1,10 @@
-# Skill: ship — Cierre y Entrega de Proyectos
+# Skill: ship — Cierre y Entrega de Proyectos IA
 
-> **Alcance:** Implementación de referencia del área IA (documentación de modelos, reentrenamiento, metadatos). EO adapta a lecciones aprendidas, estandarización y registro en SGL. TD adapta a documentación operacional, hand-off a TI y versionado de scripts. Prevalece lo definido en el CLAUDE.md del agente.
+> **Agente:** IA — Inteligencia Artificial. EO y TD tienen implementaciones propias en `agentes/EO/skills/ship/` y `agentes/TD/skills/ship/`.
 
 ## Propósito
 
-Cerrar formalmente el proyecto: documentar la solución, transferir el conocimiento al área operacional, versionar el código y los modelos, y registrar lecciones aprendidas. Asegura que la solución sea mantenible y que su valor no se pierda cuando el equipo IA pase a la siguiente iniciativa.
+Cerrar formalmente el proyecto IA: documentar la solución, transferir el conocimiento al área operacional, versionar el código y los modelos, y registrar lecciones aprendidas. Asegura que la solución sea mantenible y que su valor no se pierda cuando el equipo IA pase a la siguiente iniciativa.
 
 ---
 

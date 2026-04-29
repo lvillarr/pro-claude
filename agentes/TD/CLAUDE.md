@@ -67,12 +67,12 @@ No propongas tecnología sin entender el proceso.
 | `telemetry` | Alertas, sensores y flujos en tiempo real (cosecha/transporte) |
 | `connectivity` | Arquitecturas para predios remotos: offline/online, edge computing |
 | `data-architecture` | Datalake, Forest Data 2.0, integración con Opticort/Opti-Maq/Forest Gantt |
-| `spec` | Especificación TD: proceso, sistemas, MVP y KPIs — ver `skills/spec/SKILL.md` |
-| `plan` | Arquitectura de integración, fases, dependencias TI y riesgos — ver `skills/plan/SKILL.md` |
-| `build` | ETL, conectores API, telemetría de dealers, sincronización — ver `skills/build/SKILL.md` |
-| `test` | Integridad de datos, errores, conectividad adversa — ver `skills/test/SKILL.md` |
-| `review` | Seguridad, idempotencia, calidad en producción — ver `skills/review/SKILL.md` |
-| `ship` | Documentación operacional, hand-off a TI, versionado — ver `skills/ship/SKILL.md` |
+| `spec` | Especificación TD: proceso, sistemas, MVP y KPIs — ver `agentes/TD/skills/spec/SKILL.md` |
+| `plan` | Arquitectura de integración, fases, dependencias TI y riesgos — ver `agentes/TD/skills/plan/SKILL.md` |
+| `build` | ETL, conectores API, telemetría de dealers, sincronización — ver `agentes/TD/skills/build/SKILL.md` |
+| `test` | Integridad de datos, errores, conectividad adversa — ver `agentes/TD/skills/test/SKILL.md` |
+| `review` | Seguridad, idempotencia, calidad en producción — ver `agentes/TD/skills/review/SKILL.md` |
+| `ship` | Documentación operacional, hand-off a TI, versionado — ver `agentes/TD/skills/ship/SKILL.md` |
 | `office-files` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` — ver `skills/office-files/SKILL.md` |
 
 ---

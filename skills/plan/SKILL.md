@@ -1,10 +1,10 @@
-# Skill: plan — Planificación de Proyecto
+# Skill: plan — Planificación de Proyecto IA/GenAI
 
-> **Alcance:** Implementación de referencia del área IA (fases EDA → modelado → evaluación → entrega). EO adapta a EDT/cronograma/riesgos PMBoK. TD adapta a arquitectura de integración, fases de conectores y dependencias TI. Prevalece lo definido en el CLAUDE.md del agente.
+> **Agente:** IA — Inteligencia Artificial. EO y TD tienen implementaciones propias en `agentes/EO/skills/plan/` y `agentes/TD/skills/plan/`.
 
 ## Propósito
 
-Transformar la especificación validada en un plan de desarrollo concreto: fases de datos, modelado, evaluación y entrega. Define el entorno técnico, las dependencias de datos, los experimentos a correr y los hitos de validación. Evita iniciar desarrollo sin haber planificado la obtención y preparación de datos.
+Transformar la especificación IA validada en un plan de desarrollo concreto: fases de datos, modelado, evaluación y entrega. Define el entorno técnico, las dependencias de datos, los experimentos a correr y los hitos de validación. Evita iniciar desarrollo sin haber planificado la obtención y preparación de datos.
 
 ---
 

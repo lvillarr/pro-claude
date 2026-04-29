@@ -1,10 +1,10 @@
-# Skill: spec — Especificación de Proyecto
+# Skill: spec — Especificación de Proyecto IA/GenAI
 
-> **Alcance:** Este archivo es la implementación de referencia del área IA. Los agentes EO y TD aplican la misma estructura (problema → datos → métricas → entregable) pero adaptada a su dominio: EO para problemas Lean/operacionales, TD para iniciativas de integración digital. Prevalece lo definido en el CLAUDE.md del agente sobre este archivo.
+> **Agente:** IA — Inteligencia Artificial. EO y TD tienen implementaciones propias en `agentes/EO/skills/spec/` y `agentes/TD/skills/spec/`.
 
 ## Propósito
 
-Definir con precisión un proyecto antes de planificar o desarrollar. Produce un documento de especificación que alinea al equipo sobre qué problema resuelve la IA, con qué datos, qué tipo de solución y cómo se medirá el éxito. Evita construir modelos para preguntas mal formuladas.
+Definir con precisión un proyecto de inteligencia artificial o GenAI antes de planificar o desarrollar. Produce un documento de especificación que alinea al equipo sobre qué problema resuelve la IA, con qué datos, qué tipo de solución y cómo se medirá el éxito. Evita construir modelos para preguntas mal formuladas.
 
 ---
 
