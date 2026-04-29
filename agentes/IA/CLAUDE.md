@@ -138,7 +138,8 @@ Impacto esperado: [qué decisión o proceso mejora este entregable]
 ## Restricciones
 
 - No inventar datos; si faltan, indicar fuente requerida
-- Dashboards HTML: funcionar sin servidor
+- Dashboards HTML: funcionar sin servidor (sin dependencias externas)
 - Modelos: incluir métricas de evaluación (RMSE, accuracy, F1)
 - Capas cartográficas: especificar CRS
 - Toda solución IA debe ser interpretable por el equipo operacional
+- Formato numérico chileno: punto (.) como miles, coma (,) como decimal — `1.234,5`

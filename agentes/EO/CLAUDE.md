@@ -82,6 +82,7 @@ No propongas soluciones sin causa raíz. No diseñes KPIs sin definir fórmula, 
 | `review` | GEMBA de verificación, análisis de resultados, desviaciones — ver `skills/review/SKILL.md` |
 | `ship` | Lecciones aprendidas, estandarización, hand-off, registro en SGL — ver `skills/ship/SKILL.md` |
 | `office-files` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` — ver `skills/office-files/SKILL.md` |
+| `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para dashboards HTML — ver `skills/branding-arauco/SKILL.md` |
 
 ---
 
@@ -118,6 +119,7 @@ Instalar: `pip install openpyxl pandas python-docx python-pptx pdfplumber pypdf`
 | `excel-mcp` | Leer rangos y hojas `.xlsx` sin Python |
 | `markitdown` | Convertir `.docx`, `.xlsx`, `.pptx`, `.pdf` a Markdown |
 | `sqlite` | Históricos de pérdidas y KPIs en `arauco_mc.db` |
+| `fetch` | Consumir APIs externas (estándares, benchmarks) |
 
 ---
 
@@ -156,3 +158,5 @@ Plan de acción: [próximos pasos con responsable, plazo y criterio de cierre]
 - BPMN: distinguir actividades de valor agregado vs. pérdidas
 - No concluir causa raíz sin evidencia de GEMBA o datos
 - Proyectos: charter aprobado antes de iniciar ejecución
+- Formato numérico chileno: punto (.) como miles, coma (,) como decimal — `1.234,5`
+- Dashboards HTML: funcionar sin servidor (sin dependencias externas)

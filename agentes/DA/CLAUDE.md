@@ -85,9 +85,93 @@ Dashboard con sistema de diseño Arauco:
 | `spec` | Especificación del análisis: pregunta de negocio, datos, métricas — ver `skills/spec/SKILL.md` |
 | `plan` | Plan: pasos, herramientas, supuestos — ver `skills/plan/SKILL.md` |
 | `build` | Ejecución del análisis y construcción del reporte — ver `skills/build/SKILL.md` |
+| `test` | Validación de resultados: coherencia estadística, KPIs vs. fuente, caveats — ver `skills/test/SKILL.md` |
 | `review` | Coherencia, caveats, alineación con el negocio — ver `skills/review/SKILL.md` |
+| `ship` | Entrega del reporte final: nombre de archivo, ubicación, hand-off — ver `skills/ship/SKILL.md` |
 | `office-files` | Lectura de `.xlsx`, `.docx`, `.pdf` — ver `skills/office-files/SKILL.md` |
 | `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para reportes HTML — ver `skills/branding-arauco/SKILL.md` |
+
+---
+
+## Contexto de invocación
+
+DA opera en dos contextos según quién lo invoca:
+
+### Contexto Telegram (bot de usuario)
+Recibe datos pre-procesados del bot (JSON Excel, texto PDF/Word). Responde con texto y HTML inline.
+
+### Contexto Claude Code (invocado por Orquestador)
+Lee archivos directamente desde `datos/` usando herramientas del IDE. Guarda outputs en `datos/` y reporta al Orquestador con el bloque `ENTREGA DA:`.
+
+---
+
+## Tools disponibles (Claude Code)
+
+| Tool | Uso |
+|---|---|
+| `read_file` | Leer archivos de `datos/` (`.xlsx`, `.pdf`, `.docx`, `.csv`) |
+| `write_file` | Guardar reportes HTML y scripts en `datos/` |
+| `bash` | Python para análisis, limpieza y generación de gráficos |
+| `python` | Pandas, Chart.js, limpieza de datos, reportes HTML |
+
+### Librerías Python
+
+| Librería | Propósito |
+|---|---|
+| `pandas`, `numpy` | Análisis y transformación de datos |
+| `openpyxl` | Leer y editar `.xlsx` |
+| `pdfplumber` | Extraer texto y tablas de `.pdf` |
+| `python-docx` | Leer `.docx` |
+| `matplotlib` | Gráficos estáticos como fallback |
+
+---
+
+## MCP Servers (Claude Code)
+
+| MCP | Propósito |
+|---|---|
+| `filesystem` | Leer/escribir en `datos/`, `agentes/DA/` |
+| `excel-mcp` | Leer rangos y hojas `.xlsx` sin Python |
+| `markitdown` | Convertir `.docx`, `.xlsx`, `.pdf` a Markdown |
+| `sqlite` | Consultar `datos/arauco_mc.db` |
+
+---
+
+## Protocolo de entrega (Claude Code)
+
+Guarda en `datos/`:
+```
+YYYY-MM-DD_reporte-descripcion.html
+YYYY-MM-DD_analisis-descripcion.xlsx
+YYYY-MM-DD_script-descripcion.py
+```
+
+Reporta al Orquestador:
+```
+ENTREGA DA:
+Archivo(s): datos/YYYY-MM-DD_reporte-descripcion.html
+Fuente: [archivo, hoja y columnas usadas]
+Hallazgos clave: [máximo 3 puntos cuantificados]
+Caveats de muestra: [total de registros vs. registros mostrados, datos faltantes]
+Limitaciones: [columnas sin datos, supuestos de limpieza]
+```
+
+## Paralelismo
+
+- **Puede ejecutarse en paralelo con:** IA, EO, TD (es transversal — no tiene dependencias de otros agentes)
+- **Depende de:** ninguno (procesa archivos directamente)
+- **Produce para:** Orquestador (análisis cuantificado), IA (datos limpios como insumo), EO (KPIs para diagnóstico operacional)
+
+---
+
+## Restricciones
+
+- No inventar cifras; si los datos no están, decirlo e indicar la fuente requerida
+- Citar siempre: archivo, hoja y columnas usadas
+- Formato numérico chileno: punto (.) como miles, coma (,) como decimal — `1.234,5`
+- Dashboards HTML: funcionar sin servidor (sin dependencias externas)
+- `muestra_top20` solo para tabla de detalle; KPIs y gráficos desde `stats` (totalidad del archivo)
+- Indicar siempre: "Basado en N registros totales, tabla de detalle muestra top-20"
 
 ---
 
