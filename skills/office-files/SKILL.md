@@ -1,10 +1,8 @@
-# Skill: office-files — Lectura y Edición de Archivos de Oficina (IA)
+# Skill: office-files — Lectura y Edición de Archivos de Oficina
 
 ## Propósito
 
-Leer, extraer contenido y editar archivos `.xlsx`, `.docx`, `.pptx` y `.pdf` relevantes para proyectos de inteligencia artificial forestal. Permite al agente IA consumir especificaciones técnicas, exportaciones de datos, reportes de benchmark y producir entregables en formatos de oficina para audiencias no técnicas.
-
-> Para el protocolo completo de edición (Python, MCP tools, plantillas), referirse al skill `office-files` del agente EO. Este skill documenta los **casos de uso específicos del área IA**.
+Leer, extraer contenido y editar archivos `.xlsx`, `.docx`, `.pptx` y `.pdf`. Skill compartido por todos los agentes (IA, EO, TD, DA, Orquestador). Los ejemplos de código son del área IA como referencia técnica — cada agente adapta los patrones a su dominio (análisis de datos, procesos Lean, ETL, entregables ejecutivos).
 
 ---
 

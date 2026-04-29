@@ -1,7 +1,7 @@
 ---
 name: branding-arauco
 description: Manual de marca ARAUCO — colores, tipografías, logotipo y reglas de diseño para toda pieza visual
-trigger_keywords: ["marca", "branding", "logo", "arauco", "colores corporativos", "identidad visual", "paleta", "diseño corporativo", "manual de marca", "brand", "pdf", "reporte", "informe", "exportar", "dashboard", "tablero", "panel"]
+trigger_keywords: ["marca", "branding", "logo", "arauco", "colores corporativos", "identidad visual", "paleta", "diseño corporativo", "manual de marca", "brand", "colores arauco", "html arauco", "dashboard arauco"]
 ---
 
 ## Identidad Visual ARAUCO

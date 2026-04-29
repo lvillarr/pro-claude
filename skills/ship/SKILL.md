@@ -1,8 +1,10 @@
-# Skill: ship — Cierre y Entrega de Proyectos IA
+# Skill: ship — Cierre y Entrega de Proyectos
+
+> **Alcance:** Implementación de referencia del área IA (documentación de modelos, reentrenamiento, metadatos). EO adapta a lecciones aprendidas, estandarización y registro en SGL. TD adapta a documentación operacional, hand-off a TI y versionado de scripts. Prevalece lo definido en el CLAUDE.md del agente.
 
 ## Propósito
 
-Cerrar formalmente el proyecto IA: documentar la solución, transferir el conocimiento al área operacional, versionar el código y los modelos, y registrar lecciones aprendidas. Asegura que la solución sea mantenible y que su valor no se pierda cuando el equipo IA pase a la siguiente iniciativa.
+Cerrar formalmente el proyecto: documentar la solución, transferir el conocimiento al área operacional, versionar el código y los modelos, y registrar lecciones aprendidas. Asegura que la solución sea mantenible y que su valor no se pierda cuando el equipo IA pase a la siguiente iniciativa.
 
 ---
 
@@ -93,14 +95,7 @@ datos/[proyecto]/README.md
 datos/[proyecto]/models/metadata_v1.0.json
 ```
 
-Reportar al orquestador:
-```
-ENTREGA IA:
-Archivo(s): datos/YYYY-MM-DD_ship-ia-[nombre].md
-Hallazgos clave: [3 resultados cuantificados]
-Limitaciones: [supuestos, datos que faltan, confianza del modelo]
-Impacto esperado: [qué decisión operacional mejora]
-```
+Reportar al orquestador usando el formato `ENTREGA [AGENTE]:` definido en el CLAUDE.md del agente (IA / EO / TD).
 
 ---
 

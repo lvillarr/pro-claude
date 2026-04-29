@@ -1,8 +1,10 @@
-# Skill: test — Validación de Modelos y Soluciones IA
+# Skill: test — Validación de Soluciones
+
+> **Alcance:** Implementación de referencia del área IA (métricas ML, validación GenAI, dashboards). EO adapta a piloto en terreno, validación de datos operacionales y KPI vs. línea base. TD adapta a integridad de datos en pipelines, manejo de errores y pruebas de conectividad adversa. Prevalece lo definido en el CLAUDE.md del agente.
 
 ## Propósito
 
-Verificar que la solución IA cumple las métricas de éxito definidas en `spec` y que sus outputs son correctos, interpretables y útiles para el equipo operacional. Combina evaluación técnica del modelo con validación humana de los resultados. No avanza a `review` si las métricas no están en rango o los outputs no son accionables.
+Verificar que la solución cumple las métricas de éxito definidas en `spec` y que sus outputs son correctos, interpretables y útiles para el equipo operacional. Combina evaluación técnica del modelo con validación humana de los resultados. No avanza a `review` si las métricas no están en rango o los outputs no son accionables.
 
 ---
 

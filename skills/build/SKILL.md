@@ -1,8 +1,10 @@
-# Skill: build — Desarrollo e Implementación IA
+# Skill: build — Desarrollo e Implementación
+
+> **Alcance:** Implementación de referencia del área IA (EDA, ML, GenAI, dashboards, cartografía). EO adapta a construcción de BPMN TO-BE, KPIs, herramientas Lean y scripts ETL. TD adapta a conectores API, pipelines de telemetría y sincronización. Prevalece lo definido en el CLAUDE.md del agente.
 
 ## Propósito
 
-Ejecutar el desarrollo técnico del proyecto IA: ingesta y exploración de datos, feature engineering, entrenamiento de modelos o construcción de agentes GenAI, generación de dashboards y empaquetado del entregable. Es la fase de producción técnica que transforma el plan en código y resultados.
+Ejecutar el desarrollo técnico del proyecto: ingesta y exploración de datos, feature engineering, entrenamiento de modelos o construcción de agentes GenAI, generación de dashboards y empaquetado del entregable. Es la fase de producción técnica que transforma el plan en código y resultados.
 
 ---
 
@@ -70,7 +72,7 @@ import anthropic
 client = anthropic.Anthropic()
 
 response = client.messages.create(
-    model="claude-opus-4-6",  # modelo más capaz para razonamiento
+    model="claude-opus-4-7",  # modelo más capaz para razonamiento
     max_tokens=2048,
     system="Eres un experto en operaciones forestales de Arauco...",
     messages=[{"role": "user", "content": prompt}]
