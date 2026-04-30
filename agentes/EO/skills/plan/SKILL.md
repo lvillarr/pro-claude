@@ -13,7 +13,7 @@ Traducir el spec aprobado en un plan ejecutable: EDT (WBS), cronograma con hitos
 - Cuando el orquestador necesita cronograma para coordinar agentes en paralelo (EO + TD + IA)
 - Rediseno de proceso que requiere piloto antes de estandarizar
 
-**Prerequisito:** `skills/spec/SKILL.md` ejecutado y archivo `datos/YYYY-MM-DD_spec-*.md` en estado APROBADO.
+**Prerequisito:** `agentes/EO/skills/spec/SKILL.md` ejecutado y archivo `datos/YYYY-MM-DD_spec-*.md` en estado APROBADO.
 
 ## Protocolo de ejecucion
 

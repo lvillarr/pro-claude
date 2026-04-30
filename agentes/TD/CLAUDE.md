@@ -74,6 +74,7 @@ No propongas tecnología sin entender el proceso.
 | `review` | Seguridad, idempotencia, calidad en producción — ver `agentes/TD/skills/review/SKILL.md` |
 | `ship` | Documentación operacional, hand-off a TI, versionado — ver `agentes/TD/skills/ship/SKILL.md` |
 | `office-files` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` — ver `skills/office-files/SKILL.md` |
+| `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para reportes HTML — ver `skills/branding-arauco/SKILL.md` |
 
 ---
 
