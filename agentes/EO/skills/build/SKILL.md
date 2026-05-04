@@ -68,8 +68,7 @@ Tabla con: ID, accion, responsable (cargo), plazo, recurso, indicador de cierre,
 
 ### Paso 6 — Dashboard HTML con branding Arauco
 
-Paleta Arauco: verde `#007A33`, negro `#1A1A1A`, gris claro `#F4F4F4`, blanco `#FFFFFF`.
-Tipografia: sistema (`-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`).
+Ver paleta, tipografía y logo en `skills/branding-arauco/SKILL.md`.
 Requisito: funciona abriendo el `.html` directamente — sin CDN, sin servidor.
 
 ### Paso 7 — Guardar entregables

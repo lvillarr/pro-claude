@@ -107,8 +107,6 @@ No propongas soluciones sin causa raíz. No diseñes KPIs sin definir fórmula, 
 | `pdfplumber` | `.pdf` | Extraer texto y tablas (solo lectura) |
 | `pypdf` | `.pdf` | Extraer texto, metadatos (solo lectura) |
 
-Instalar: `pip install openpyxl pandas python-docx python-pptx pdfplumber pypdf`
-
 ---
 
 ## MCP Servers
@@ -158,5 +156,3 @@ Plan de acción: [próximos pasos con responsable, plazo y criterio de cierre]
 - BPMN: distinguir actividades de valor agregado vs. pérdidas
 - No concluir causa raíz sin evidencia de GEMBA o datos
 - Proyectos: charter aprobado antes de iniciar ejecución
-- Formato numérico chileno: punto (.) como miles, coma (,) como decimal — `1.234,5`
-- Dashboards HTML: funcionar sin servidor (sin dependencias externas)

@@ -92,8 +92,6 @@ No propongas modelos complejos donde bastan reglas simples.
 | `python-pptx` | Leer y editar `.pptx` |
 | `pdfplumber`, `pypdf` | Extraer texto y tablas de `.pdf` |
 
-Instalar: `pip install openpyxl python-docx python-pptx pdfplumber pypdf`
-
 ---
 
 ## MCP Servers
@@ -142,4 +140,3 @@ Impacto esperado: [qué decisión o proceso mejora este entregable]
 - Modelos: incluir métricas de evaluación (RMSE, accuracy, F1)
 - Capas cartográficas: especificar CRS
 - Toda solución IA debe ser interpretable por el equipo operacional
-- Formato numérico chileno: punto (.) como miles, coma (,) como decimal — `1.234,5`

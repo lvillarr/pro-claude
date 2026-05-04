@@ -99,8 +99,6 @@ No propongas tecnología sin entender el proceso.
 | `python-pptx` | Presentaciones de arquitectura `.pptx` |
 | `pdfplumber`, `pypdf` | Extraer specs de manuales `.pdf` |
 
-Instalar: `pip install requests pandas sqlalchemy openpyxl python-docx python-pptx pdfplumber pypdf`
-
 ---
 
 ## MCP Servers
@@ -151,4 +149,3 @@ Impacto esperado: [qué habilita en el negocio forestal]
 - Scripts: manejo básico de errores y logging
 - Priorizar soluciones que funcionen con conectividad intermitente en terreno
 - Evaluar impacto en procesos antes de proponer herramientas
-- Formato numérico chileno: punto (.) como miles, coma (,) como decimal — `1.234,5`

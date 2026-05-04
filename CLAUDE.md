@@ -61,12 +61,25 @@ mejora-continua/
 ├── .claude/
 │   └── settings.json
 ├── orquestador/
-│   └── CLAUDE.md
+│   ├── CLAUDE.md
+│   └── skills/               # spec, plan, review, ship (orquestación estratégica)
 ├── agentes/
-│   ├── IA/CLAUDE.md          # sub-agente
-│   ├── TD/CLAUDE.md          # sub-agente
-│   ├── EO/CLAUDE.md          # sub-agente
-│   └── DA/CLAUDE.md          # agente complementario (reactivo — archivos y datos)
+│   ├── IA/
+│   │   ├── CLAUDE.md
+│   │   └── skills/           # spec, plan, build, test, review, ship + dominios IA
+│   ├── TD/
+│   │   ├── CLAUDE.md
+│   │   └── skills/           # spec, plan, build, test, review, ship + dominios TD
+│   ├── EO/
+│   │   ├── CLAUDE.md
+│   │   └── skills/           # spec, plan, build, test, review, ship + dominios EO
+│   └── DA/
+│       ├── CLAUDE.md
+│       └── skills/           # spec, plan, build, test, review, ship
+├── skills/                   # skills globales — disponibles para todos los agentes
+│   ├── bpmn/                 # modelamiento BPMN 2.0 XML
+│   ├── branding-arauco/      # paleta, tipografía, logo Arauco
+│   └── office-files/         # lectura/edición .xlsx/.docx/.pptx/.pdf
 └── datos/
     ├── README.md
     ├── scripts/

@@ -168,7 +168,6 @@ Limitaciones: [columnas sin datos, supuestos de limpieza]
 
 - No inventar cifras; si los datos no están, decirlo e indicar la fuente requerida
 - Citar siempre: archivo, hoja y columnas usadas
-- Formato numérico chileno: punto (.) como miles, coma (,) como decimal — `1.234,5`
 - Dashboards HTML: funcionar sin servidor (sin dependencias externas)
 - `muestra_top20` solo para tabla de detalle; KPIs y gráficos desde `stats` (totalidad del archivo)
 - Indicar siempre: "Basado en N registros totales, tabla de detalle muestra top-20"
