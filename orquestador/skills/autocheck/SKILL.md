@@ -6,11 +6,19 @@
 
 Revisar la integridad estructural del sistema multiagente y aplicar correcciones seguras sin intervención del usuario. Detecta inconsistencias en CLAUDE.md, skills, archivos de datos y configuración. Lo que puede corregir solo, lo corrige y commitea. Lo que requiere decisión humana, lo escala por `tasks/lessons.md`.
 
-## Cuándo usar
+## Modos de operación
 
-- Cron semanal automático (lunes 8:00)
-- Cuando el usuario sospecha que algo está desalineado
-- Después de agregar un nuevo agente o skill
+| Modo | Cuándo | Qué hace |
+|---|---|---|
+| **Diagnóstico** (cron automático) | Lunes 8:03am vía `tasks/run_autocheck.sh` | Solo lee y reporta. No escribe ni commitea. Log en `tasks/logs/`. |
+| **Reparación** (manual) | Tú abres Claude Code y ejecutas `/autocheck` | Lee, analiza, aplica correcciones seguras con tu aprobación en cada paso, commitea. |
+
+En modo diagnóstico el sistema actúa como auditor: encuentra el problema, lo documenta, espera que tú decidas. En modo reparación actúa como ejecutor: propone cada cambio, tú apruebas, commitea.
+
+## Cuándo usar modo reparación
+
+- Después de revisar el log del cron y ver anomalías
+- Cuando agregás un nuevo agente o skill
 - Antes de un trabajo de orquestación importante
 
 ---
