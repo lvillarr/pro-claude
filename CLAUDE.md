@@ -10,7 +10,7 @@
 
 | Término | Definición |
 |---|---|
-| **SGL** | Sistema de Gestión Lean — plataforma corporativa de seguimiento de pérdidas y oportunidades |
+| **SGL** | Sistema de Gestión Lean — seguimiento de pérdidas, alertas y oportunidades |
 | **KPI** | Indicador clave de desempeño operacional |
 | **ON/OFF** | Estado de marcha/parada de equipos industriales |
 | **OEE** | Overall Equipment Effectiveness (Disponibilidad × Rendimiento × Calidad) |
@@ -20,11 +20,11 @@
 
 ---
 
-## Sistemas corporativos relevantes
+## Sistemas corporativos
 
 | Sistema | Descripción |
 |---|---|
-| **SGL** | Registro de pérdidas, alertas y seguimiento Lean |
+| **SGL** | Registro de pérdidas y seguimiento Lean |
 | **SAP PM** | Mantenimiento de equipos y órdenes de trabajo |
 | **Historian / OSIsoft PI** | Telemetría y datos de proceso en tiempo real |
 | **Power BI** | Dashboards corporativos de KPIs |
@@ -33,156 +33,64 @@
 
 ## Convenciones del proyecto
 
-### Nombrado de archivos en `datos/`
-```
-YYYY-MM-DD_tipo-descripcion.ext
-```
-Ejemplos:
-- `2025-06-10_reporte-semanal-linea3.html`
-- `2025-06-10_analisis-equipo-bomba42.xlsx`
+Archivos en `datos/`: `YYYY-MM-DD_tipo-descripcion.ext` — tipos: `reporte`, `analisis`, `script`, `plantilla`, `kpi`, `diagnostico`.
 
-### Tipos de archivo reconocidos
-| Tipo | Descripción |
-|---|---|
-| `reporte` | Informe ejecutivo consolidado |
-| `analisis` | Output del agente IA |
-| `script` | Código Python o Shell reutilizable |
-| `plantilla` | Base `.xlsx` o `.docx` para EO |
-| `kpi` | Tabla de indicadores |
-| `diagnostico` | Ficha técnica de equipo o proceso |
-
----
-
-## Estructura del proyecto
-
-```
-mejora-continua/
-├── CLAUDE.md
-├── .claude/
-│   └── settings.json
-├── orquestador/
-│   ├── CLAUDE.md
-│   └── skills/               # spec, plan, review, ship (orquestación estratégica)
-├── agentes/
-│   ├── IA/
-│   │   ├── CLAUDE.md
-│   │   └── skills/           # spec, plan, build, test, review, ship + dominios IA
-│   ├── TD/
-│   │   ├── CLAUDE.md
-│   │   └── skills/           # spec, plan, build, test, review, ship + dominios TD
-│   ├── EO/
-│   │   ├── CLAUDE.md
-│   │   └── skills/           # spec, plan, build, test, review, ship + dominios EO
-│   └── DA/
-│       ├── CLAUDE.md
-│       └── skills/           # spec, plan, build, test, review, ship
-├── skills/                   # skills globales — disponibles para todos los agentes
-│   ├── branding-arauco/      # paleta, tipografía, logo Arauco
-│   └── office-files/         # lectura/edición .xlsx/.docx/.pptx/.pdf
-└── datos/
-    ├── README.md
-    ├── scripts/
-    ├── plantillas/
-    └── arauco_mc.db
-```
+Estructura: `orquestador/`, `agentes/{IA,TD,EO,DA}/`, `skills/` (globales), `datos/`. Ver `ls` para detalle.
 
 ---
 
 ## Restricciones globales
 
-- No inventar datos operacionales ni KPIs sin fuente real
-- Entregables: incluir fecha y área responsable
-- Archivos sensibles (credenciales, tokens) nunca en `datos/`
+- **No inventar datos operacionales, KPIs ni cifras.** Si no puedes obtenerlos desde fuente, dilo e indica qué se necesita.
+- Siempre cita fuente: archivo, tabla o sistema (`arauco_mc.db`, SGL, SAP PM, Historian, Planex, `datos/`).
+- Entregables: incluir fecha y área responsable.
+- Archivos sensibles (credenciales, tokens) nunca en `datos/`.
 
 ---
 
 ## Reglas de trabajo con Claude Code
 
-### 1. No programes sin contexto
-Antes de escribir código:
-- Lee archivos relevantes del módulo afectado
-- Revisa estructura del proyecto
-- Identifica patrones existentes (nombrado, arquitectura, dependencias)
-- Si el alcance no está claro, haz **una sola pregunta concreta**
+### 1. Lee antes de escribir
+Antes de código: lee archivos del módulo afectado, identifica patrones existentes. Si el alcance no está claro, haz una sola pregunta concreta.
 
-> ❌ No asumas. No inventes estructuras. No repitas patrones de otros proyectos.
+### 2. No reescribas archivos grandes innecesariamente
+Cambios <30%: ediciones quirúrgicas. Reescritura completa solo si se pide o es estructural.
 
-### 2. Respuestas cortas por defecto
-- Mínima cantidad de texto que resuelva el problema
-- Sin introducciones, sin resúmenes, sin relleno
-- Si es código, muestra solo el código relevante
+### 3. No releas el mismo archivo dos veces
+Cita directamente lo ya leído en la sesión.
 
-### 3. No reescribas archivos grandes innecesariamente
-- Cambios <30%: **ediciones quirúrgicas**
-- Reescritura completa solo si se pide o si es estructural
+### 4. Valida antes de declarar listo
+Sintaxis válida, casos borde, interfaces intactas, rutas y nombres coherentes. Si no puedes verificar: *"No puedo confirmar X sin ejecutar."*
 
-### 4. No releas el mismo archivo dos veces
-- Cita directamente lo ya leído en la sesión
+### 5. Soluciones simples primero
+La solución más simple que resuelva el problema. Sin abstracción para requisitos hipotéticos.
 
-> Releer = pérdida de estado. Evítalo.
-
-### 5. No declares "listo" sin validar
-- [ ] ¿Sintaxis válida?
-- [ ] ¿Casos borde contemplados?
-- [ ] ¿Interfaces intactas?
-- [ ] ¿Rutas, imports y nombres coherentes?
-
-Si no puedes verificar: *"No puedo confirmar X sin ejecutar."*
-
-> ❌ No digas "listo", "perfecto" o "debería funcionar" sin respaldo.
-
-### 6. Cero charla aduladora
-Prohibido: "¡Excelente pregunta!", "Claro, con gusto", "Por supuesto". Responde directo.
-
-### 7. Soluciones simples primero
-- La solución más simple que resuelva el problema
-- Sin abstracción para requisitos hipotéticos futuros
-- Si propones algo complejo, justifica por qué lo simple no alcanza
-
-> YAGNI: *You Aren't Gonna Need It.*
-
-### 8. No entres en conflicto inmediato
-- Implementa primero
-- Si hay problema real, menciónalo después en una línea
-
-Formato: *"Hecho. Nota: esto podría causar X si ocurre Y."*
+### 6. Commit + push automático
+Cuando el fix está listo y el contexto es claro: commit y push sin preguntar.
 
 ---
 
-## Reglas generales — aplicables a todos los agentes
+## Reglas generales — todos los agentes
 
-### 1. Uso de herramientas y fuentes
-1. Usa herramientas disponibles (`read_file`, `sqlite`, `excel-mcp`, `markitdown`, `bash`, `web_fetch`) antes de responder
-2. **No inventes datos operacionales, KPIs, cifras ni resultados.** Si no puedes obtenerlos, dilo e indica qué fuente se necesita
-3. Cita la fuente: archivo, tabla o sistema (SGL, SAP PM, Historian, Planex, Forest Data 2.0, `arauco_mc.db`)
-4. Preguntas conceptuales: sin herramientas. Preguntas con cifras/KPIs: usa herramienta
+### Datos y herramientas
+- Usa herramientas disponibles (`sqlite`, `excel-mcp`, `markitdown`, `bash`) antes de responder.
+- Números desde herramienta o archivo, **nunca de memoria**. Preguntas conceptuales: sin herramientas.
 
-### 2. Datos operacionales — regla fundamental
-Ante preguntas sobre datos, cifras, KPIs o análisis:
-1. Obtén datos desde archivos fuente (`arauco_mc.db`, exportaciones SGL, `datos/`)
-2. Números desde herramienta o archivo, nunca de memoria
-3. Indica fuente (archivo, tabla y columnas)
-4. Nunca inventes cifras aunque parezcan razonables
+### Formato de respuesta
+- Conciso por defecto; detallado si se pide.
+- **Formato numérico chileno:** punto como miles, coma como decimal — `1.234.567 m³` / `$12.500,75` / `3,14%`.
 
-### 3. Formato de respuesta
-- Conciso por defecto; detallado si se pide
-- Markdown: encabezados, listas, tablas, negritas cuando mejoren claridad
-- **Formato numérico chileno:** punto (.) como miles, coma (,) como decimal
-  - `1.234.567 m³` / `$12.500,75` / `3,14%` / `OEE: 87,3%`
-
-### 4. Restricciones de lenguaje — contexto chileno (regla prioritaria)
+### Restricciones de lenguaje — contexto chileno (regla prioritaria)
 Audiencia: Chile. Tono profesional y neutro.
-
-**Palabras prohibidas:**
 
 | Evitar | Usar en cambio |
 |---|---|
-| **pico** | "punto más alto", "máximo", "nivel peak", "cumbre" |
+| **pico** | "punto más alto", "máximo", "nivel peak" |
 | **polla** | "apuesta", "sorteo", "lotería" |
-| **coger** | "tomar", "agarrar", "recoger", "obtener" |
+| **coger** | "tomar", "agarrar", "obtener" |
 | **concha** | "caparazón", "valva", "cáscara" |
-| **raja** | "grieta", "abertura", "rendija", "diferencia" |
-| **caliente** (figurado) | "motivado", "entusiasmado", "enojado" según contexto |
+| **raja** | "grieta", "abertura", "diferencia" |
+| **caliente** (figurado) | "motivado", "enojado" según contexto |
 | **huevón / weón / wn** | no usar |
 
-> Término técnico que coincida: reformula o usa alternativa en inglés ("peak", "gap").
+Término técnico que coincida: reformula o usa alternativa en inglés ("peak", "gap").

@@ -100,29 +100,6 @@ Si algún punto del checklist falla: detener, replantear la delegación o escala
 
 ---
 
-## Casos de uso frecuentes
-
-### Informe semanal operacional
-1. **[PARALELO]** **EO** → KPIs y pérdidas del SGL · **IA** → patrones ON/OFF y tendencias · **TD** → estado de integraciones
-2. **[SECUENCIAL]** **Orquestador** → informe ejecutivo (requiere outputs anteriores)
-
-### Diagnóstico de equipo crítico
-1. **[PARALELO]** **IA** → análisis histórico (horas ON, fallos, tendencias) · **TD** → estado de telemetría y alertas
-2. **[SECUENCIAL]** **EO** → impacto en KPIs y plan Lean (requiere output de IA)
-3. **[SECUENCIAL]** **Orquestador** → ficha diagnóstico + recomendaciones
-
-### Rediseño de proceso
-1. **[PARALELO]** **EO** → mapa AS-IS, métricas y pérdidas · **IA** → cuellos de botella con datos históricos
-2. **[SECUENCIAL]** **TD** → propuesta de automatización (requiere AS-IS y análisis IA)
-3. **[SECUENCIAL]** **Orquestador** → documento TO-BE con caso de negocio
-
-### Proyecto digital o IA
-1. **[PARALELO]** **IA** → diseño, datos y arquitectura · **EO** → impacto en procesos y gestión del cambio
-2. **[SECUENCIAL]** **TD** → integraciones y plan de implementación (requiere arquitectura IA)
-3. **[SECUENCIAL]** **Orquestador** → ficha de proyecto, business case, cronograma
-
----
-
 ## Tono y estilo de comunicación
 
 **Con el usuario:** ejecutivo, directo, orientado a decisiones. Estructura Minto: situación → complicación → pregunta → respuesta. Cuantifica siempre.
@@ -191,7 +168,6 @@ Después de **cualquier corrección del usuario** (hipótesis errónea, delegaci
 | `filesystem` | Acceso completo al árbol del proyecto |
 | `markitdown` | Leer `.docx`, `.xlsx`, `.pptx`, `.pdf` |
 | `excel-mcp` | Leer tablas `.xlsx` |
-| `git` | Versiona entregables finales |
 
 ---
 
