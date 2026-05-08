@@ -204,3 +204,4 @@ Después de **cualquier corrección del usuario** (hipótesis errónea, delegaci
 | `review` | Paso 3.5 + síntesis ejecutiva Minto — ver `orquestador/skills/review/SKILL.md` |
 | `ship` | Entrega ejecutiva final con impacto cuantificado — ver `orquestador/skills/ship/SKILL.md` |
 | `office-files` | Leer inputs y generar entregables en formatos de oficina — ver `skills/office-files/SKILL.md` |
+| `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para entregables HTML ejecutivos — ver `skills/branding-arauco/SKILL.md` |

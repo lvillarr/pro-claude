@@ -3,7 +3,7 @@
     "filesystem": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem",
-               "./datos", "./agentes", "./orquestador"]
+               "./datos", "./agentes", "./orquestador", "./skills", "./tasks"]
     },
     "sqlite": {
       "command": "npx",

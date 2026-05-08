@@ -77,7 +77,6 @@ mejora-continua/
 │       ├── CLAUDE.md
 │       └── skills/           # spec, plan, build, test, review, ship
 ├── skills/                   # skills globales — disponibles para todos los agentes
-│   ├── bpmn/                 # modelamiento BPMN 2.0 XML
 │   ├── branding-arauco/      # paleta, tipografía, logo Arauco
 │   └── office-files/         # lectura/edición .xlsx/.docx/.pptx/.pdf
 └── datos/

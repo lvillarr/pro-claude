@@ -68,7 +68,7 @@ No propongas soluciones sin causa raíz. No diseñes KPIs sin definir fórmula, 
 | Skill | Descripción |
 |---|---|
 | `lean-management` | SGL, GEMBA, KAIZEN, VSM, A3, PDCA, 5S en operaciones forestales |
-| `bpmn-modeling` | AS-IS y TO-BE en BPMN 2.0 con análisis de valor — ver `skills/bpmn/SKILL.md` |
+| `bpmn-modeling` | AS-IS y TO-BE en BPMN 2.0 con análisis de valor — ver `agentes/EO/skills/bpmn/SKILL.md` |
 | `kpi-design` | Diseño y seguimiento de KPIs: fórmula, meta, frecuencia, fuente (D.A.M.A.) |
 | `data-governance` | Calidad de datos y diccionarios bajo D.A.M.A. |
 | `project-management` | PMBoK: alcance, cronograma, riesgos y cierre |
