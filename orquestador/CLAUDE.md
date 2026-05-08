@@ -144,7 +144,7 @@ Después de **cualquier corrección del usuario** (hipótesis errónea, delegaci
 
 | Tool | Uso principal |
 |---|---|
-| `task` | Lanza subagentes IA, TD y EO |
+| `Agent` | Lanza subagentes IA, TD y EO (en paralelo o secuencial según el plan) |
 | `list_dir` | Descubre archivos en `datos/` |
 | `read_file` | Lee outputs de agentes |
 | `write_file` | Genera entregables ejecutivos |

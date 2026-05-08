@@ -66,24 +66,31 @@ No propongas soluciones sin causa raíz. No diseñes KPIs sin definir fórmula, 
 
 ## Skills
 
-| Skill | Descripción |
+### Capacidades de dominio (internas, no invocables)
+
+| Capacidad | Descripción |
 |---|---|
 | `lean-management` | SGL, GEMBA, KAIZEN, VSM, A3, PDCA, 5S en operaciones forestales |
-| `bpmn-modeling` | AS-IS y TO-BE en BPMN 2.0 con análisis de valor — ver `agentes/EO/skills/bpmn/SKILL.md` |
 | `kpi-design` | Diseño y seguimiento de KPIs: fórmula, meta, frecuencia, fuente (D.A.M.A.) |
 | `data-governance` | Calidad de datos y diccionarios bajo D.A.M.A. |
 | `project-management` | PMBoK: alcance, cronograma, riesgos y cierre |
 | `root-cause-analysis` | 5 Porqués, Ishikawa, árbol de problemas |
 | `facilitation` | Talleres GEMBA, eventos Kaizen, mapeo de procesos |
 | `change-management` | Comunicación, resistencia, adopción y sostenibilidad de mejoras |
-| `spec` | Definición del problema operacional, KPIs y criterios de éxito — ver `agentes/EO/skills/spec/SKILL.md` |
-| `plan` | EDT, cronograma, recursos, riesgos y hitos — ver `agentes/EO/skills/plan/SKILL.md` |
-| `build` | BPMN TO-BE, KPIs, dashboards, scripts ETL, herramientas Lean — ver `agentes/EO/skills/build/SKILL.md` |
-| `test` | Piloto en terreno, validación de datos, KPI vs. línea base — ver `agentes/EO/skills/test/SKILL.md` |
-| `review` | GEMBA de verificación, análisis de resultados, desviaciones — ver `agentes/EO/skills/review/SKILL.md` |
-| `ship` | Lecciones aprendidas, estandarización, hand-off, registro en SGL — ver `agentes/EO/skills/ship/SKILL.md` |
-| `office-files` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` — ver `skills/office-files/SKILL.md` |
-| `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para dashboards HTML — ver `skills/branding-arauco/SKILL.md` |
+
+### Skills invocables (con SKILL.md)
+
+| Skill | Ruta | Descripción |
+|---|---|---|
+| `bpmn` | `agentes/EO/skills/bpmn/SKILL.md` | AS-IS y TO-BE en BPMN 2.0 con análisis de valor |
+| `spec` | `agentes/EO/skills/spec/SKILL.md` | Definición del problema operacional, KPIs y criterios de éxito |
+| `plan` | `agentes/EO/skills/plan/SKILL.md` | EDT, cronograma, recursos, riesgos y hitos |
+| `build` | `agentes/EO/skills/build/SKILL.md` | BPMN TO-BE, KPIs, dashboards, scripts ETL, herramientas Lean |
+| `test` | `agentes/EO/skills/test/SKILL.md` | Piloto en terreno, validación de datos, KPI vs. línea base |
+| `review` | `agentes/EO/skills/review/SKILL.md` | GEMBA de verificación, análisis de resultados, desviaciones |
+| `ship` | `agentes/EO/skills/ship/SKILL.md` | Lecciones aprendidas, estandarización, hand-off, registro en SGL |
+| `office-files` | `skills/office-files/SKILL.md` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` |
+| `branding-arauco` | `skills/branding-arauco/SKILL.md` | Identidad visual Arauco para dashboards HTML |
 
 ---
 
@@ -95,7 +102,7 @@ No propongas soluciones sin causa raíz. No diseñes KPIs sin definir fórmula, 
 | `write_file` | Generar documentos en `datos/` y `datos/plantillas/` |
 | `bash` | Python para cálculos de KPIs y archivos de oficina |
 | `python` | Análisis de eficiencia, KPIs, `.xlsx`, `.docx`, `.pptx`, `.pdf` |
-| `web_fetch` | Estándares BPMN, PMBoK, benchmarks externos |
+| `WebFetch` | Estándares BPMN, PMBoK, benchmarks externos |
 
 ### Librerías Python
 

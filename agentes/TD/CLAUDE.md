@@ -59,7 +59,9 @@ No propongas tecnología sin entender el proceso.
 
 ## Skills
 
-| Skill | Descripción |
+### Capacidades de dominio (internas, no invocables)
+
+| Capacidad | Descripción |
 |---|---|
 | `api-integration` | Conexión con APIs REST/SOAP (SAP, SGL, Historian, Planex) |
 | `dealer-api` | Telemetría de dealers: autenticación, polling, normalización |
@@ -68,14 +70,19 @@ No propongas tecnología sin entender el proceso.
 | `telemetry` | Alertas, sensores y flujos en tiempo real (cosecha/transporte) |
 | `connectivity` | Arquitecturas para predios remotos: offline/online, edge computing |
 | `data-architecture` | Datalake, Forest Data 2.0, integración con Opticort/Opti-Maq/Forest Gantt |
-| `spec` | Especificación TD: proceso, sistemas, MVP y KPIs — ver `agentes/TD/skills/spec/SKILL.md` |
-| `plan` | Arquitectura de integración, fases, dependencias TI y riesgos — ver `agentes/TD/skills/plan/SKILL.md` |
-| `build` | ETL, conectores API, telemetría de dealers, sincronización — ver `agentes/TD/skills/build/SKILL.md` |
-| `test` | Integridad de datos, errores, conectividad adversa — ver `agentes/TD/skills/test/SKILL.md` |
-| `review` | Seguridad, idempotencia, calidad en producción — ver `agentes/TD/skills/review/SKILL.md` |
-| `ship` | Documentación operacional, hand-off a TI, versionado — ver `agentes/TD/skills/ship/SKILL.md` |
-| `office-files` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` — ver `skills/office-files/SKILL.md` |
-| `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para reportes HTML — ver `skills/branding-arauco/SKILL.md` |
+
+### Skills invocables (con SKILL.md)
+
+| Skill | Ruta | Descripción |
+|---|---|---|
+| `spec` | `agentes/TD/skills/spec/SKILL.md` | Especificación TD: proceso, sistemas, MVP y KPIs |
+| `plan` | `agentes/TD/skills/plan/SKILL.md` | Arquitectura de integración, fases, dependencias TI y riesgos |
+| `build` | `agentes/TD/skills/build/SKILL.md` | ETL, conectores API, telemetría de dealers, sincronización |
+| `test` | `agentes/TD/skills/test/SKILL.md` | Integridad de datos, errores, conectividad adversa |
+| `review` | `agentes/TD/skills/review/SKILL.md` | Seguridad, idempotencia, calidad en producción |
+| `ship` | `agentes/TD/skills/ship/SKILL.md` | Documentación operacional, hand-off a TI, versionado |
+| `office-files` | `skills/office-files/SKILL.md` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` |
+| `branding-arauco` | `skills/branding-arauco/SKILL.md` | Identidad visual Arauco para reportes HTML |
 
 ---
 
@@ -84,7 +91,7 @@ No propongas tecnología sin entender el proceso.
 | Tool | Uso |
 |---|---|
 | `bash` | Scripts, pruebas de conexión, operaciones de sistema |
-| `web_fetch` | Consumir APIs externas y descargar recursos |
+| `WebFetch` | Consumir APIs externas y descargar recursos |
 | `read_file` | Leer configuraciones y datos desde `datos/` |
 | `write_file` | Guardar scripts y configuraciones en `datos/scripts/` |
 | `python` | ETL, conectores, integración de sistemas |

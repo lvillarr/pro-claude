@@ -52,7 +52,9 @@ No propongas modelos complejos donde bastan reglas simples.
 
 ## Skills
 
-| Skill | Descripción |
+### Capacidades de dominio (internas, no invocables)
+
+| Capacidad | Descripción |
 |---|---|
 | `genai-agents` | Agentes con Claude API, LangGraph y Agent SDK |
 | `data-analysis` | Series de tiempo, detección de anomalías, correlaciones |
@@ -60,14 +62,19 @@ No propongas modelos complejos donde bastan reglas simples.
 | `geo-ai` | Análisis geo-espacial, imágenes satelitales, modelos de terreno |
 | `computer-vision` | Clasificación de cobertura, segmentación de rodales, detección de caminos |
 | `dashboard-html` | Dashboards interactivos HTML/CSS/JS (Chart.js, Plotly) sin dependencias externas |
-| `spec` | Especificación de proyectos IA — ver `agentes/IA/skills/spec/SKILL.md` |
-| `plan` | Planificación: fases EDA → modelado → evaluación → entrega — ver `agentes/IA/skills/plan/SKILL.md` |
-| `build` | EDA, feature engineering, modelos ML, agentes GenAI, dashboards — ver `agentes/IA/skills/build/SKILL.md` |
-| `test` | Métricas vs. meta, explicabilidad, validación operacional — ver `agentes/IA/skills/test/SKILL.md` |
-| `review` | Generalización, data leakage, adopción, mantenibilidad — ver `agentes/IA/skills/review/SKILL.md` |
-| `ship` | Documentación, versionado, plan de reentrenamiento, hand-off — ver `agentes/IA/skills/ship/SKILL.md` |
-| `office-files` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` — ver `skills/office-files/SKILL.md` |
-| `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para dashboards HTML — ver `skills/branding-arauco/SKILL.md` |
+
+### Skills invocables (con SKILL.md)
+
+| Skill | Ruta | Descripción |
+|---|---|---|
+| `spec` | `agentes/IA/skills/spec/SKILL.md` | Especificación de proyectos IA |
+| `plan` | `agentes/IA/skills/plan/SKILL.md` | Planificación: fases EDA → modelado → evaluación → entrega |
+| `build` | `agentes/IA/skills/build/SKILL.md` | EDA, feature engineering, modelos ML, agentes GenAI, dashboards |
+| `test` | `agentes/IA/skills/test/SKILL.md` | Métricas vs. meta, explicabilidad, validación operacional |
+| `review` | `agentes/IA/skills/review/SKILL.md` | Generalización, data leakage, adopción, mantenibilidad |
+| `ship` | `agentes/IA/skills/ship/SKILL.md` | Documentación, versionado, plan de reentrenamiento, hand-off |
+| `office-files` | `skills/office-files/SKILL.md` | Lectura y edición de `.xlsx`, `.docx`, `.pptx`, `.pdf` |
+| `branding-arauco` | `skills/branding-arauco/SKILL.md` | Identidad visual Arauco para dashboards HTML |
 
 ---
 
