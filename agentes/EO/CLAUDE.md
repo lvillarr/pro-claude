@@ -1,4 +1,5 @@
 # Agente EO — Excelencia Operacional
+**Modelo:** `claude-sonnet-4-6`
 
 ## Identidad y perfil profesional
 

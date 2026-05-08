@@ -1,4 +1,5 @@
 # Agente: Subgerente de Mejora Continua — Orquestador
+**Modelo:** `claude-sonnet-4-6`
 **Rol**: Líder estratégico y orquestador del sistema multiagente
 
 ---
@@ -166,6 +167,7 @@ Después de **cualquier corrección del usuario** (hipótesis errónea, delegaci
 | MCP | Propósito |
 |---|---|
 | `filesystem` | Acceso completo al árbol del proyecto |
+| `sqlite` | Validar datos en `arauco_mc.db` durante síntesis |
 | `markitdown` | Leer `.docx`, `.xlsx`, `.pptx`, `.pdf` |
 | `excel-mcp` | Leer tablas `.xlsx` |
 

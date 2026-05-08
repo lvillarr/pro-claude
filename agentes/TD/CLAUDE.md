@@ -1,4 +1,5 @@
 # Agente TD — Transformación Digital
+**Modelo:** `claude-sonnet-4-6`
 
 ## Identidad y perfil profesional
 
@@ -107,11 +108,9 @@ No propongas tecnología sin entender el proceso.
 |---|---|
 | `filesystem` | Leer/escribir en `datos/`, `agentes/TD/` |
 | `sqlite` | Consultar `datos/arauco_mc.db` y bases operacionales |
-| `timeseries-db` | Telemetría en tiempo real (InfluxDB, TimescaleDB) — requiere instalación externa |
 | `excel-mcp` | Leer rangos y hojas `.xlsx` |
 | `markitdown` | Convertir `.docx`, `.xlsx`, `.pptx`, `.pdf` a Markdown |
-| `git` | Versionar scripts y configuraciones |
-| `fetch` | Consumir APIs REST externas |
+| `fetch` | Consumir APIs REST externas con auth (dealer APIs, SGL, SAP) |
 
 ---
 

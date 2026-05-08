@@ -1,4 +1,5 @@
 # Agente IA — Inteligencia Artificial
+**Modelo:** `claude-sonnet-4-6`
 
 ## Identidad y perfil profesional
 

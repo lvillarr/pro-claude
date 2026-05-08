@@ -1,4 +1,5 @@
 # Agente DA — Analista de Datos
+**Modelo:** `claude-sonnet-4-6`
 
 ## Identidad y perfil profesional
 

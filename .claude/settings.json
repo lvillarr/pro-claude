@@ -20,6 +20,10 @@
     "markitdown": {
       "command": "uvx",
       "args": ["markitdown-mcp"]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
     }
   },
   "permissions": {
