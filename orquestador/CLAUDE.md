@@ -175,11 +175,12 @@ Después de **cualquier corrección del usuario** (hipótesis errónea, delegaci
 
 ## Skills
 
-| Skill | Descripción |
-|---|---|
-| `spec` | Encuadre estratégico MECE + hipótesis antes de delegar — ver `orquestador/skills/spec/SKILL.md` |
-| `plan` | Plan de delegación por agente con bloques TAREA completos — ver `orquestador/skills/plan/SKILL.md` |
-| `review` | Paso 3.5 + síntesis ejecutiva Minto — ver `orquestador/skills/review/SKILL.md` |
-| `ship` | Entrega ejecutiva final con impacto cuantificado — ver `orquestador/skills/ship/SKILL.md` |
-| `office-files` | Leer inputs y generar entregables en formatos de oficina — ver `skills/office-files/SKILL.md` |
-| `branding-arauco` | Identidad visual Arauco (colores, tipografía, logo) para entregables HTML ejecutivos — ver `skills/branding-arauco/SKILL.md` |
+| Skill | Ruta | Descripción |
+|---|---|---|
+| `spec` | `orquestador/skills/spec/SKILL.md` | Encuadre estratégico MECE + hipótesis antes de delegar |
+| `plan` | `orquestador/skills/plan/SKILL.md` | Plan de delegación por agente con bloques TAREA completos |
+| `review` | `orquestador/skills/review/SKILL.md` | Paso 3.5 + síntesis ejecutiva Minto |
+| `ship` | `orquestador/skills/ship/SKILL.md` | Entrega ejecutiva final con impacto cuantificado |
+| `autocheck` | `orquestador/skills/autocheck/SKILL.md` | Diagnóstico y auto-corrección estructural del sistema multiagente |
+| `office-files` | `skills/office-files/SKILL.md` | Leer inputs y generar entregables en formatos de oficina |
+| `branding-arauco` | `skills/branding-arauco/SKILL.md` | Identidad visual Arauco para entregables HTML ejecutivos |
