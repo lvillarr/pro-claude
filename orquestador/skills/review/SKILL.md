@@ -12,8 +12,33 @@ Validar cada ENTREGA recibida de los sub-agentes antes de sintetizar, detectar i
 - Antes de ejecutar `ship`
 - Cuando hay inconsistencia entre los outputs de dos agentes distintos
 - Cuando el usuario pide una revision de un entregable ya generado
+- **En modo ad-hoc** (análisis directo de imágenes/archivos sin flujo formal): aplicar Paso 0-AD antes de generar recomendaciones
 
-**Prerequisito:** Al menos una ENTREGA recibida de sub-agente con sus campos declarados. Si no hay ENTREGA, no hay review: solicitar al agente que emita su ENTREGA antes de continuar.
+**Prerequisito (modo formal):** Al menos una ENTREGA recibida de sub-agente con sus campos declarados. Si no hay ENTREGA, no hay review: solicitar al agente que emita su ENTREGA antes de continuar.
+
+## Paso 0-AD — Checklist para síntesis ad-hoc
+
+Aplicar antes de escribir cualquier recomendación en modo ad-hoc:
+
+Para cada recomendación que quieras incluir, responder:
+
+- [ ] ¿Hay un dato específico en el insumo (cifra, zona, métrica, nombre) que origina esta recomendación?
+- [ ] ¿Puedo citar exactamente ese dato en el formato `← Evidencia: [dato]`?
+- [ ] ¿O estoy deduciendo desde conocimiento general del dominio forestal sin evidencia presente?
+
+**Si la respuesta a la tercera pregunta es "sí":** no incluir como recomendación. Convertir a bloque `⚠️ Hipótesis a validar` o eliminar.
+
+**Ejemplo correcto:**
+```
+**TD:** Validar sincronización de Planex NOM con cartografía de habilitación Los Patos
+← Evidencia: proyecto astillado R004107 tiene 60 Ha adicionales (121→181 Ha) no contempladas en versión original R004535
+```
+
+**Ejemplo incorrecto (prohibido):**
+```
+**EO:** Mapear proceso AS-IS de habilitación Los Patos; identificar qué cambió entre versión original y astillada
+```
+*(Esto es una tarea genérica de EO, no derivada de un dato específico del análisis)*
 
 ## Protocolo
 

@@ -79,6 +79,29 @@ Plazo: inmediato / iteración siguiente
 - Traduce hallazgos técnicos a lenguaje de negocio
 - Presenta: **contexto → hallazgos clave → recomendaciones → próximos pasos**
 
+### Paso 3-AD — Síntesis ad-hoc (sin ENTREGA formal de agente)
+
+Aplica cuando el usuario envía imágenes, archivos o preguntas directamente sin flujo formal.
+
+**Regla crítica:** cada recomendación debe estar anclada a un hallazgo específico visible en los insumos. Formato obligatorio:
+
+```
+**[Agente]:** [Recomendación concreta]
+← Evidencia: [dato o hallazgo específico que la origina — citar cifra, zona, métrica real]
+```
+
+**Prohibido en síntesis ad-hoc:**
+- Recomendaciones derivadas del conocimiento general de Arauco/forestal que no aparezcan en el insumo analizado
+- Sugerencias genéricas de proceso sin vinculación a datos del insumo
+- Frases como "es probable que", "podría existir", "se recomienda revisar" sin evidencia presente
+
+**Si no hay evidencia suficiente para una recomendación:** no incluirla. Mejor menos recomendaciones grounded que más recomendaciones especulativas.
+
+**Hipótesis permitidas:** si se quiere señalar algo no confirmado, usar:
+```
+⚠️ Hipótesis a validar: [enunciado] — requiere [dato específico faltante]
+```
+
 ### Paso 3.5 — Validación antes de entregar
 
 **Checklist de integridad:**
