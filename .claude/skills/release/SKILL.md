@@ -8,8 +8,7 @@ Ejecutar en orden. **Pedir confirmacion antes de cada paso destructivo (bump, co
 
 ```bash
 cd /Users/lucianovillarroelparra/telegram-bot
-pip install -q -r requirements-dev.txt
-pytest tests/ -v
+make test-unit
 ```
 
 Si algun test falla: reportar y detener. No continuar sin aprobacion explicita.

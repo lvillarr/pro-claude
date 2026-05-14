@@ -15,6 +15,8 @@ CRON_ENV="$HOME/.claude/.arauco_cron.env"
 
 mkdir -p "$LOG_DIR"
 
+[ -x "$CLAUDE_BIN" ] || { echo "ERROR: claude no encontrado en $CLAUDE_BIN" | tee "$LOG_FILE"; exit 1; }
+
 # ── Auth: API key tiene precedencia sobre OAuth ───────────────────────────────
 # Si existe el archivo de credenciales, sourcea la API key.
 # Esto evita la expiracion de tokens OAuth cuando el cron corre sin sesion activa.
