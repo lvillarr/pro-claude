@@ -1,0 +1,98 @@
+{
+  "version": "1.0.0",
+  "description": "Rubrica de auditoria de consistencia — sistema multi-agente Arauco MC",
+  "agents": ["IA", "TD", "EO", "DA", "orquestador"],
+  "repos": [
+    "telegram-bot",
+    "telegram-bot/proyecto_claude"
+  ],
+  "checks": [
+    {
+      "id": "A",
+      "name": "CLAUDE.md drift",
+      "description": "Detectar divergencias entre CLAUDE.md global y CLAUDE.md de cada agente",
+      "severity": "high",
+      "verify": [
+        "Cada agente tiene CLAUDE.md en agentes/{agent}/CLAUDE.md",
+        "Restricciones globales (formato numerico chileno, no inventar datos, citar fuente) presentes en todos",
+        "Glosario operacional no redefinido de forma contradictoria en agentes"
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Skill scope leakage",
+      "description": "Skills declarados globalmente pero usados por un solo agente",
+      "severity": "medium",
+      "verify": [
+        "Skills en .claude/skills/ son usados por 2+ agentes (o por el orquestador)",
+        "Skills exclusivos de un agente viven en agentes/{agent}/skills/, no en global",
+        "Caso conocido: bpmn → solo EO → debe estar en agentes/EO/skills/bpmn/ (verificar que NO esta en global)"
+      ],
+      "known_correct": {
+        "bpmn": "agentes/EO/skills/bpmn/SKILL.md"
+      }
+    },
+    {
+      "id": "C",
+      "name": "Referencias rotas",
+      "description": "Referencias a archivos, skills o rutas que no existen",
+      "severity": "high",
+      "verify": [
+        "Cada ruta mencionada en CLAUDE.md existe en el filesystem",
+        "Cada skill invocado en SKILL.md tiene su SKILL.md correspondiente",
+        "arauco_mc.db existe en datos/",
+        "tasks/lessons.md existe (aunque este vacio)"
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Declaraciones de herramientas faltantes",
+      "description": "Herramientas usadas en skills/agentes pero no declaradas en settings.json o CLAUDE.md",
+      "severity": "medium",
+      "verify": [
+        "Herramientas MCP (sqlite, excel-mcp, markitdown, filesystem, fetch) declaradas en .claude/settings.json",
+        "Si un agente usa una herramienta nueva, esta en permissions.allow de settings.json",
+        "railway CLI: si se usa en skills, verificar que esta instalado (which railway)"
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Plugins desactualizados",
+      "description": "Plugins referenciados en CLAUDE.md o skills que no estan instalados o fueron renombrados",
+      "severity": "low",
+      "verify": [
+        "Plugins mencionados por nombre existen en ~/.claude/plugins/",
+        "Skills de plugins (caveman, claude-mem, token-optimizer) accesibles via Skill tool",
+        "No hay referencias a nombres de plugins antiguos o renombrados"
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Paridad bot Telegram / web UI",
+      "description": "Features disponibles en Telegram deben tener equivalente web, y viceversa",
+      "severity": "medium",
+      "verify": [
+        "Comandos Telegram (CommandHandler) tienen ruta FastAPI equivalente o justificacion documentada de ausencia",
+        "Rutas FastAPI criticas (/api/chat, /api/history, /api/artifact) tienen comando Telegram equivalente",
+        "Templates HTML (web_chat.html, planner_mc.html, planner_mc_mobile.html) existen en templates/"
+      ]
+    }
+  ],
+  "paths": {
+    "global_claude_md": "CLAUDE.md",
+    "agent_claude_md": "agentes/{agent}/CLAUDE.md",
+    "orquestador_claude_md": "orquestador/CLAUDE.md",
+    "global_skills": ".claude/skills/",
+    "agent_skills": "agentes/{agent}/skills/",
+    "orquestador_skills": "orquestador/skills/",
+    "db": "datos/arauco_mc.db",
+    "settings": ".claude/settings.json",
+    "bot_py": "../bot.py",
+    "templates": "../templates/"
+  },
+  "invocation": {
+    "manual": "Invocar: 'ejecuta auditoria de consistencia' o '/audit'",
+    "parallel": "Para cobertura maxima: 'Usa 4 agentes paralelos para auditar IA, TD, EO y DA contra rubric.json, luego consolida hallazgos'",
+    "output": "Checklist por check A-F. Severidad: high/medium/low. NO auto-corregir sin aprobacion."
+  }
+}
