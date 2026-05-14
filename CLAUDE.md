@@ -66,7 +66,7 @@ Estructura: `orquestador/`, `agentes/{IA,TD,EO,DA}/`, `skills/` (globales), `dat
 ## Preferencias de Plugins y Skills
 
 - Code reviews: usar skill local `caveman-review`, **no** `gh` CLI ni herramientas web.
-- Cuando el usuario mencione un skill por nombre (`superpowers`, `ultrathink`, `claude-mem`, `branding-arauco`, `bpmn`, `find-skills`, etc.): revisar `.claude/skills/` y plugins instalados **antes** de usar herramientas genericas.
+- Cuando el usuario mencione un skill por nombre (`superpowers`, `ultrathink`, `claude-mem`, `branding-arauco`, `bpmn`, `audit`, `release`, `weekly-retro`, etc.): revisar `.claude/skills/` y plugins instalados **antes** de usar herramientas genericas.
 
 ---
 

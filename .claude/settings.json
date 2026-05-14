@@ -29,10 +29,12 @@
   "permissions": {
     "allow": [
       "Bash(python3:*)",
+      "Bash(python3.10:*)",
       "Bash(pip:*)",
       "Bash(pip3:*)",
       "Bash(git:*)",
-      "Bash(uvx:*)"
+      "Bash(uvx:*)",
+      "Bash(make:*)"
     ],
     "deny": ["Bash(rm -rf *)"]
   }
