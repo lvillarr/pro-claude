@@ -48,6 +48,37 @@ Estructura: `orquestador/`, `agentes/{IA,TD,EO,DA}/`, `skills/` (globales), `dat
 
 ---
 
+## Aprobacion y Autonomia
+
+- **NUNCA** configurar cron jobs, tareas programadas o flujos automatizados con permisos de auto-fix/auto-commit sin aprobacion explicita del usuario.
+- "Autonomia" en este proyecto = auto-auditoria y auto-reporte. **NO** ejecucion ni aplicacion de cambios sin supervision.
+- Siempre requerir confirmacion humana antes de aplicar cambios provenientes de checks automatizados.
+
+---
+
+## Flujo Git
+
+- Despues de cada commit: hacer push inmediatamente, salvo indicacion contraria.
+- En releases: hacer push de tags tambien (`git push --tags`).
+
+---
+
+## Preferencias de Plugins y Skills
+
+- Code reviews: usar skill local `caveman-review`, **no** `gh` CLI ni herramientas web.
+- Cuando el usuario mencione un skill por nombre (`superpowers`, `ultrathink`, `claude-mem`, `branding-arauco`, `bpmn`, `find-skills`, etc.): revisar `.claude/skills/` y plugins instalados **antes** de usar herramientas genericas.
+
+---
+
+## Estructura Multi-Agente
+
+- Sistema con 5 agentes (IA, TD, EO, DA, orquestador) y reglas de scope de skills.
+- Algunos skills son exclusivos de un agente (ej: `bpmn` → agente EO), no globales.
+- Al agregar/quitar un skill: actualizar **todos** los CLAUDE.md relevantes entre agentes. Sacar del global si se scopea a un solo agente.
+- Bot Telegram y web UI deben tener paridad de features. Al cambiar uno, revisar el otro.
+
+---
+
 ## Reglas de trabajo con Claude Code
 
 ### 1. Lee antes de escribir
