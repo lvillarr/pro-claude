@@ -13,6 +13,13 @@ LOG_FILE="$LOG_DIR/autocheck_$TIMESTAMP.log"
 
 mkdir -p "$LOG_DIR"
 
+# Pre-flight: verificar autenticacion Claude antes de correr
+AUTH_STATUS=$(/Users/lucianovillarroelparra/.local/bin/claude auth status 2>/dev/null)
+if ! echo "$AUTH_STATUS" | grep -q '"loggedIn": true'; then
+    echo "ERROR $(date): Claude no autenticado. Ejecutar 'claude login' manualmente y reintentar." | tee "$LOG_FILE"
+    exit 1
+fi
+
 PROMPT="Eres el Orquestador — Subgerente de Mejora Continua de Arauco. Ejecuta el skill autocheck en MODO DIAGNÓSTICO siguiendo orquestador/skills/autocheck/SKILL.md:
 
 RESTRICCIÓN MODO DIAGNÓSTICO: NO escribas archivos, NO hagas git commits, NO modifiques nada.
