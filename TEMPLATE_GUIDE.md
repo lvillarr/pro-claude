@@ -16,8 +16,10 @@ Guía completa para replicar desde cero el sistema de agentes Claude Code y el b
 8. [Protocolo de orquestación](#8-protocolo-de-orquestación)
 9. [Convenciones de datos](#9-convenciones-de-datos)
 10. [Bot de Telegram — arquitectura](#10-bot-de-telegram--arquitectura)
-11. [Checklist para nuevo proyecto](#11-checklist-para-nuevo-proyecto)
-12. [Adaptaciones por cliente](#12-adaptaciones-por-cliente)
+11. [Planner MC — arquitectura](#11-planner-mc--arquitectura)
+12. [Web UI — arquitectura](#12-web-ui--arquitectura)
+13. [Checklist para nuevo proyecto](#13-checklist-para-nuevo-proyecto)
+14. [Adaptaciones por cliente](#14-adaptaciones-por-cliente)
 
 ---
 
@@ -763,7 +765,188 @@ Flujo con confirmación de 4 pasos:
 
 ---
 
-## 11. Checklist para nuevo proyecto
+## 11. Planner MC — arquitectura
+
+Herramienta de gestión de proyectos Arauco. Dos versiones HTML autocontenidas servidas por el bot.
+
+### Archivos
+
+| Archivo | Descripción |
+|---|---|
+| `templates/planner_mc.html` | Versión desktop (sidebar + topbar + vistas) |
+| `templates/planner_mc_mobile.html` | Versión mobile (header fijo + bottom nav) |
+
+Ambos se sirven via `/planner` en Telegram y `GET /` en la web. Se cargan al inicio del bot y se despachan con `store_html()`.
+
+### Áreas y subareas
+
+```javascript
+const AREAS = {
+  eo: { name:'Excelencia Operacional', hex:'#059669', icon:'🏭' },
+  td: { name:'Transformación Digital', hex:'#2563eb', icon:'💻' },
+  ai: { name:'Inteligencia Artificial', hex:'#7c3aed', icon:'🤖' },
+  id: { name:'I+D en IA',              hex:'#0891b2', icon:'🔬' },
+  im: { name:'Implementación IA',      hex:'#d97706', icon:'⚙️'  },
+};
+```
+
+`ai`, `id` e `im` se agregan como un bloque unificado en KPIs y resumen. En home, cada una tiene su propio botón de carga Excel.
+
+### Fuente de datos
+
+Solo Excel de Microsoft Planner (exportado como `.xlsx`). La librería XLSX.js parsea el archivo client-side. No hay backend involucrado — todo es JavaScript puro. Los datos viven en memoria mientras la pestaña está abierta.
+
+### Vistas (desktop)
+
+| Vista | ID | Descripción |
+|---|---|---|
+| Ejecutiva | `view-exec` | KPIs globales + cards por área + resumen semanal |
+| Plan/Board | `view-plan` + `pview-board` | Tablero Kanban por bucket |
+| Plan/Grid | `view-plan` + `pview-grid` | Tabla ordenable con todos los campos |
+| Plan/Timeline | `view-plan` + `pview-gantt` | Gantt con toggle Semanas/Meses + filtro por área |
+
+### Vistas (mobile)
+
+| Vista | ID | Descripción |
+|---|---|---|
+| Inicio | `view-exec` | KPIs + cards por área |
+| Tablero | `view-plan` > `plan-board-content` | Grupos por bucket colapsables |
+| Timeline | `view-plan` > `plan-gantt-content` | Gantt mobile con toggle Semanas/Meses |
+| Alertas | `view-alerts` | Vencidas + tareas de la semana |
+
+### Gantt / Timeline
+
+Implementado en ambas versiones. Características:
+
+- **Toggle escala**: Semanas (columnas de 7 días) o Meses
+- **Fecha inicio**: campo `Inicio`/`Start Date` del Excel; si falta → fecha_fin - 14 días
+- **Hoy**: columna con fondo rojo semitransparente + borde rojo
+- **Barras**: color del área, opacidad reducida si `done`, borde rojo si `late`
+- **Desktop**: filtro por área (Todas / EO / TD / IA / I+D / Impl.) en topbar del Gantt
+- **Desktop**: en vista "Todas las áreas", filas agrupadas con encabezado por área
+- **Mobile**: Gantt filtra automáticamente por `curArea` (subagente activo en bottom nav)
+
+```javascript
+// Derivar fecha inicio si no existe en el Excel
+let start = pDate(r['Inicio'] || r['Start Date'] || r['Fecha inicio'] || null);
+if(!start){ start = new Date(end); start.setDate(start.getDate() - 14); }
+```
+
+### Resumen semanal
+
+Modal "OneNote" con tareas marcadas `Week` o con campo `Abordaría esta Semana? = Sí`.
+
+- **Títulos de área**: `font-size:15px; font-weight:700` — subtítulos visibles, sin uppercase
+- **Secciones**: agrupadas por área con borde izquierdo de color
+- **Copiar texto**: genera markdown para pegar en Telegram/WhatsApp con `*negrita*` por sección
+- Excluye: `Finalizado`, `Stand By (Congelado)`, tareas al 100%
+
+### Carga de Excel en home — card IA
+
+La card IA en home tiene 3 botones de carga independientes:
+
+| Botón | `openModalFor()` | Qué carga |
+|---|---|---|
+| IA General | `'ai'` | Planner principal de IA |
+| I+D en IA | `'id'` | Planner de investigación |
+| Implementación IA | `'im'` | Planner de implementación |
+
+`updateAreaCards()` actualiza el estado de los 3 botones cada vez que se carga cualquier Excel.
+
+### Agregar nuevo artefacto al bot desde planner
+
+```python
+# bot.py — endpoint existente
+@_web_app.post("/api/artifact")
+async def web_api_artifact(request: Request):
+    art_type = body.get("type", "")
+    if art_type == "planner":
+        url = store_html(_PLANNER_HTML)
+        return {"result_type": "url", "url": url}
+    if art_type == "planner_mobile":
+        url = store_html(_PLANNER_MOBILE_HTML)
+        return {"result_type": "url", "url": url}
+```
+
+---
+
+## 12. Web UI — arquitectura
+
+Interfaz web en `templates/web_chat.html`. Se sirve en `GET /` del servidor FastAPI.
+
+### Stack frontend
+
+- HTML/CSS/JS vanilla (sin frameworks)
+- Streaming SSE desde `/api/chat`
+- Fuente Lato (Google Fonts)
+- Sin bundler — un solo archivo HTML
+
+### Endpoints del backend (FastAPI)
+
+| Endpoint | Método | Descripción |
+|---|---|---|
+| `/` | GET | Sirve `web_chat.html` |
+| `/api/chat` | POST | Chat general con streaming SSE. Inyecta RAG automáticamente si hay docs. |
+| `/api/rag/chat` | POST | Chat RAG especializado — responde SOLO desde documentos indexados. Sistema RAG sin restricciones del SYSTEM_PROMPT general. |
+| `/api/rag/docs` | GET | Lista documentos indexados en ChromaDB |
+| `/api/rag/query` | POST | Búsqueda semántica directa (retorna chunks, no respuesta Claude) |
+| `/api/rag/index` | POST | Indexa un archivo (PDF, DOCX, XLSX, PPTX, TXT) en ChromaDB |
+| `/api/artifact` | POST | Genera artefacto (html, excel, pdf, pptx, gantt, email, planner) |
+| `/api/upload` | POST | Sube archivo adjunto para adjuntar al mensaje de chat |
+| `/api/history` | GET | Historial de conversaciones del día |
+| `/api/send-email` | POST | Envía correo via SendGrid |
+| `/g/{gid}` | GET | Sirve HTML generado (artefactos, planner) |
+
+### Diferencia `/api/chat` vs `/api/rag/chat`
+
+| | `/api/chat` | `/api/rag/chat` |
+|---|---|---|
+| Sistema | `SYSTEM_PROMPT` general (prohíbe generar contenido directo) | Sistema RAG especializado (genera respuestas completas desde docs) |
+| RAG | Inyecta contexto automáticamente pero Claude no genera | Responde ÚNICAMENTE desde documentos indexados |
+| Streaming | Sí (SSE) | No (respuesta JSON) |
+| Equivalente Telegram | Conversación normal | `_handle_nlm_query` + `nlm_mode` |
+
+### Modo RAG en web (paridad con Telegram)
+
+Tres formas de activar el modo RAG:
+
+1. **Sidebar "Base RAG"** → abre panel + activa modo automáticamente
+2. **Panel RAG → "🤖 Preguntar con IA"** → consulta directa en el panel lateral
+3. **Banner "Modo RAG"** → toggle manual, los mensajes del chat van a `/api/rag/chat`
+
+```javascript
+// Intercept en send() cuando ragMode=true
+if(ragMode){
+  const resp = await fetch('/api/rag/chat', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({question: text, history: history.slice(-6), model})
+  });
+  const data = await resp.json();
+  appendAI(data.answer);
+}
+```
+
+### RAG — flujo de indexado
+
+1. Usuario sube archivo con botón 📚 (input bar) o "📥 Indexar documento" (panel RAG)
+2. `POST /api/rag/index` → extrae texto según extensión → `rag.index_document()`
+3. `index_document()` chunkea a 400 palabras con overlap 60, embede con VoyageAI en lotes de 8, persiste en ChromaDB (`/data/chroma`)
+4. Cada mensaje de chat llama `rag.build_context(message)` → top-4 chunks por similitud coseno → inyectado en system prompt
+
+```python
+# rag.py — parámetros clave
+CHROMA_PATH  = "/data/chroma"        # persiste en Railway /data
+EMBED_MODEL  = "voyage-3"
+TOP_K        = 4
+MAX_DISTANCE = 0.55                  # umbral similitud coseno
+BATCH        = 8                     # chunks por llamada VoyageAI
+```
+
+**Nota:** ChromaDB persiste en `/data/chroma` en Railway. Los documentos indexados desde Telegram son accesibles desde la web y viceversa — comparten la misma colección.
+
+---
+
+## 13. Checklist para nuevo proyecto
 
 ### Sistema de agentes (Claude Code)
 
