@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mejora Continua IA — Arauco | Split-View Chat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================================ */
+    /* RESET & BASE */
+    /* ============================================================================ */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0ede9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============================================================================ */
+    /* HEADER */
+    /* ============================================================================ */
+    .header {
+      background: #696158;
+      color: #fff;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .logo { height: 28px; opacity: 0.95; }
+    .header-title { font-size: 1rem; font-weight: 700; letter-spacing: -0.2px; }
+    .header-sub { font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); font-weight: 300; }
+    .agent-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .badge-orq { background: #696158; color: #fff; border: 1px solid rgba(255, 255, 255, 0.3); }
+    .badge-eo { background: #EA7600; color: #fff; }
+    .badge-ia { background: #BFB800; color: #333; }
+    .badge-td { background: rgba(255, 255, 255, 0.15); color: #fff; }
+    .badge-da { background: #DFD1A7; color: #333; }
+
+    @media (max-width: 768px) {
+      .badge { font-size: 0.6rem; padding: 2px 6px; }
+      .header-sub { display: none; }
+    }
+
+    /* ============================================================================ */
+    /* MAIN LAYOUT — SPLIT-VIEW */
+    /* ============================================================================ */
+    .main {
+      display: grid;
+      grid-template-columns: 60% 40%;
+      gap: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Chat Panel — Left */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-right: 1px solid #e0dbd4;
+    }
+
+    /* Live Data Panel — Right */
+    .live-data-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    /* ============================================================================ */
+    /* RESPONSIVE: MOBILE STACK VERTICAL */
+    /* ============================================================================ */
+    @media (max-width: 768px) {
+      .main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        gap: 1px;
+      }
+      .live-data-panel {
+        max-height: 40vh;
+        border-top: 1px solid #e0dbd4;
+        border-right: none;
+      }
+    }
+
+    /* ============================================================================ */
+    /* CHAT TIMELINE — MESSAGES CONTAINER */
+    /* ============================================================================ */
+    .timeline {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .timeline::-webkit-scrollbar { width: 6px; }
+    .timeline::-webkit-scrollbar-track { background: transparent; }
+    .timeline::-webkit-scrollbar-thumb {
+      background: #d0c9c0;
+      border-radius: 3px;
+    }
+
+    /* ============================================================================ */
+    /* CHAT CARDS — EXPANDIBLE */
+    /* ============================================================================ */
+    .chat-card {
+      display: flex;
+      gap: 12px;
+      max-width: 100%;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chat-card.user {
+      flex-direction: row-reverse;
+      align-self: flex-end;
+    }
+
+    .chat-card-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .avatar-user { background: #696158; }
+    .avatar-orq { background: #696158; }
+    .avatar-eo { background: #EA7600; }
+    .avatar-ia { background: #BFB800; color: #333; }
+    .avatar-td { background: #DFD1A7; color: #333; }
+    .avatar-da { background: #f0ede9; color: #333; border: 1px solid #e0dbd4; }
+
+    .chat-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chat-card-sender {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .chat-card.user .chat-card-sender { text-align: right; }
+
+    .chat-card-bubble {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+
+    .chat-card.user .chat-card-bubble {
+      background: #696158;
+      color: #fff;
+      border-radius: 12px 4px 12px 12px;
+    }
+
+    .chat-card.ai .chat-card-bubble {
+      background: #fff;
+      color: #333;
+      border-radius: 4px 12px 12px 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      border: 1px solid #eee;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-card.ai .chat-card-bubble:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-color: #DFD1A7;
+    }
+
+    .chat-card-bubble strong { font-weight: 700; }
+    .chat-card-bubble code {
+      background: #f5f2ee;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: #696158;
+    }
+
+    /* Agent tag inside bubble */
+    .agent-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tag-orq { background: #696158; color: #fff; }
+    .tag-eo { background: #EA7600; color: #fff; }
+    .tag-ia { background: #BFB800; color: #333; }
+    .tag-td { background: #DFD1A7; color: #333; }
+    .tag-da { background: #f0ede9; color: #333; border: 1px solid #e0dbd4; }
+
+    /* Evidence anchor badge */
+    .evidence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: #f5f2ee;
+      border: 1px solid #DFD1A7;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #696158;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    .evidence-badge:hover {
+      background: #DFD1A7;
+      border-color: #696158;
+    }
+
+    /* Card detail content (hidden by default, shown when expanded) */
+    .chat-card-detail {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+
+    .chat-card.expanded .chat-card-detail { display: block; }
+
+    /* Expand toggle icon */
+    .expand-toggle {
+      display: inline-block;
+      margin-left: 4px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .chat-card.expanded .expand-toggle { transform: rotate(180deg); }
+
+    /* Timestamp */
+    .chat-card-time {
+      font-size: 0.65rem;
+      color: #bbb;
+      align-self: flex-end;
+      margin-top: 4px;
+    }
+
+    /* ============================================================================ */
+    /* ARTIFACT TABLES */
+    /* ============================================================================ */
+    .artifact {
+      margin: 12px 0;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      overflow: hidden;
+    }
+
+    .artifact-table {
+      overflow-x: auto;
+    }
+
+    .artifact-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      background: #fff;
+    }
+
+    .artifact-table th {
+      background: #696158;
+      color: #fff;
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .artifact-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .artifact-table tr:nth-child(even) td { background: #f9f7f5; }
+    .artifact-table tr:hover td { background: #f5f2ee; }
+
+    .artifact-footer {
+      padding: 8px 12px;
+      background: #f9f7f5;
+      border-top: 1px solid #eee;
+      font-size: 0.75rem;
+      color: #999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .artifact-footer a {
+      color: #696158;
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .artifact-footer a:hover { text-decoration: underline; }
+
+    /* ============================================================================ */
+    /* KPI CHIPS */
+    /* ============================================================================ */
+    .kpi-row {
+      display: flex;
+      gap: 10px;
+      margin: 12px 0;
+      flex-wrap: wrap;
+    }
+
+    .kpi-chip {
+      background: #f5f2ee;
+      border: 1px solid #DFD1A7;
+      border-radius: 8px;
+      padding: 10px 14px;
+      min-width: 120px;
+    }
+
+    .kpi-chip .val {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #696158;
+    }
+
+    .kpi-chip .lbl {
+      font-size: 0.68rem;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+
+    .kpi-chip .delta {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #EA7600;
+      margin-top: 2px;
+    }
+
+    /* ============================================================================ */
+    /* INPUT AREA */
+    /* ============================================================================ */
+    .input-area {
+      padding: 16px 24px;
+      background: #fff;
+      border-top: 1px solid #e0dbd4;
+      flex-shrink: 0;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      background: #f5f2ee;
+      border: 1.5px solid #DFD1A7;
+      border-radius: 12px;
+      padding: 10px 14px;
+      transition: border-color 0.2s;
+    }
+
+    .input-row:focus-within { border-color: #696158; }
+
+    .input-row textarea {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.88rem;
+      color: #333;
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+      max-height: 120px;
+      min-height: 22px;
+    }
+
+    .input-row textarea::placeholder { color: #bbb; }
+
+    .send-btn {
+      width: 36px;
+      height: 36px;
+      background: #696158;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .send-btn:hover { background: #BFB800; }
+    .send-btn svg { width: 16px; height: 16px; fill: #fff; }
+
+    .input-hints {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hint-btn {
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      background: #f5f2ee;
+      border: 1px solid #DFD1A7;
+      border-radius: 20px;
+      cursor: pointer;
+      color: #696158;
+      font-family: 'Lato', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .hint-btn:hover { background: #DFD1A7; }
+
+    /* ============================================================================ */
+    /* LIVE DATA PANEL */
+    /* ============================================================================ */
+    .ldp-header {
+      display: flex;
+      gap: 8px;
+      background: #fff;
+      border-bottom: 1px solid #e0dbd4;
+      padding: 12px;
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+
+    .ldp-tab {
+      padding: 6px 12px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #999;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .ldp-tab:hover { color: #696158; }
+    .ldp-tab.active {
+      border-bottom-color: #696158;
+      color: #696158;
+    }
+
+    .ldp-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: none;
+    }
+
+    .ldp-content.active { display: block; }
+
+    /* Tab-specific content */
+    .ldp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .ldp-table th {
+      background: #f5f2ee;
+      padding: 6px 8px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 1px solid #e0dbd4;
+      text-transform: uppercase;
+    }
+
+    .ldp-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .ldp-table tr:hover td { background: #f9f7f5; }
+
+    /* Status badge for acciones */
+    .status-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-active { background: #BFB800; color: #333; }
+    .status-pending { background: #EA7600; color: #fff; }
+    .status-done { background: #696158; color: #fff; }
+
+    /* Mini Gantt visualization */
+    .mini-gantt {
+      margin: 12px 0;
+      padding: 10px;
+      background: #f9f7f5;
+      border-radius: 6px;
+      border: 1px solid #eee;
+    }
+
+    .gantt-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      font-size: 0.75rem;
+    }
+
+    .gantt-bar {
+      height: 16px;
+      border-radius: 4px;
+      flex: 1;
+      min-width: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gantt-bar-active { background: linear-gradient(90deg, #BFB800, #EA7600); }
+    .gantt-bar-pending { background: linear-gradient(90deg, #DFD1A7, #BFB800); }
+    .gantt-bar-done { background: #696158; }
+
+    .gantt-label {
+      min-width: 120px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    /* Search box in live data */
+    .ldp-search {
+      margin-bottom: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .ldp-search input {
+      flex: 1;
+      padding: 6px 10px;
+      border: 1px solid #e0dbd4;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-family: 'Lato', sans-serif;
+    }
+
+    .ldp-search input::placeholder { color: #bbb; }
+
+    .ldp-export-btn {
+      padding: 6px 10px;
+      background: #696158;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .ldp-export-btn:hover { background: #BFB800; }
+
+    /* ============================================================================ */
+    /* TYPING INDICATOR */
+    /* ============================================================================ */
+    .typing {
+      display: flex;
+      gap: 5px;
+      padding: 14px 16px;
+      align-items: center;
+    }
+
+    .typing span {
+      width: 7px;
+      height: 7px;
+      background: #BFB800;
+      border-radius: 50%;
+      animation: bounce 0.8s infinite;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.15s; }
+    .typing span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    /* ============================================================================ */
+    /* WELCOME SCREEN */
+    /* ============================================================================ */
+    .welcome {
+      text-align: center;
+      margin: auto;
+      padding: 40px 20px;
+      max-width: 480px;
+    }
+
+    .welcome-icon { font-size: 2.5rem; margin-bottom: 16px; }
+
+    .welcome h2 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #696158;
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      font-size: 0.88rem;
+      color: #999;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .welcome-actions { display: flex; flex-direction: column; gap: 8px; }
+
+    .welcome-card {
+      background: #fff;
+      border: 1px solid #e0dbd4;
+      border-radius: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+    }
+
+    .welcome-card:hover {
+      border-left-color: #BFB800;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .welcome-card strong {
+      font-size: 0.85rem;
+      color: #333;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .welcome-card span {
+      font-size: 0.75rem;
+      color: #999;
+    }
+
+    /* ============================================================================ */
+    /* ACCESSIBILITY & FOCUS */
+    /* ============================================================================ */
+    button:focus,
+    input:focus,
+    textarea:focus {
+      outline: 2px solid #696158;
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Touch targets min 44x44px */
+    @media (hover: none) {
+      .send-btn { width: 44px; height: 44px; }
+      button { min-height: 44px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================================ -->
+<!-- HEADER -->
+<!-- ============================================================================ -->
+<div class="header">
+  <div class="header-left">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 28'%3E%3Crect fill='%23fff' width='100' height='28'/%3E%3Ctext x='50' y='19' font-family='Arial' font-size='14' font-weight='bold' fill='%23696158' text-anchor='middle'%3EARAUCO%3C/text%3E%3C/svg%3E" class="logo" alt="Arauco">
+    <div>
+      <div class="header-title">Mejora Continua IA</div>
+      <div class="header-sub">Subgerencia de Mejora Continua</div>
+    </div>
+  </div>
+  <div class="agent-badges">
+    <span class="badge badge-orq">Orquestador</span>
+    <span class="badge badge-eo">EO</span>
+    <span class="badge badge-ia">IA</span>
+    <span class="badge badge-td">TD</span>
+    <span class="badge badge-da">DA</span>
+  </div>
+</div>
+
+<!-- ============================================================================ -->
+<!-- MAIN LAYOUT — SPLIT-VIEW -->
+<!-- ============================================================================ -->
+<div class="main">
+
+  <!-- ======================================================================== -->
+  <!-- CHAT PANEL (LEFT) — 60% desktop, 100% mobile -->
+  <!-- ======================================================================== -->
+  <div class="chat-panel">
+
+    <!-- Timeline -->
+    <div class="timeline" id="timeline">
+      <!-- Messages will be rendered here -->
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <div class="input-row">
+        <textarea id="input" placeholder="Escribe tu consulta..."
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){sendMessage()}"
+          oninput="autoResizeTextarea(this)"></textarea>
+        <button class="send-btn" onclick="sendMessage()" aria-label="Enviar mensaje">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+      </div>
+      <div class="input-hints">
+        <button class="hint-btn" onclick="insertHint('Analiza el OEE de Línea 3 en Q1 2026')">📊 OEE L3</button>
+        <button class="hint-btn" onclick="insertHint('¿Cuál es el estado actual de pérdidas?')">🔍 Pérdidas</button>
+        <button class="hint-btn" onclick="insertHint('Genera BPMN del proceso')">📋 BPMN</button>
+        <button class="hint-btn" onclick="insertHint('Estado de acciones activas')">⚡ Acciones</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- LIVE DATA PANEL (RIGHT) — 40% desktop, collapsible mobile -->
+  <!-- ======================================================================== -->
+  <div class="live-data-panel">
+
+    <!-- Tabs Header -->
+    <div class="ldp-header">
+      <button class="ldp-tab active" onclick="switchLDPTab('equipos')">Equipos</button>
+      <button class="ldp-tab" onclick="switchLDPTab('kpis')">KPIs</button>
+      <button class="ldp-tab" onclick="switchLDPTab('perdidas')">Pérdidas</button>
+      <button class="ldp-tab" onclick="switchLDPTab('acciones')">Acciones</button>
+      <button class="ldp-tab" onclick="switchLDPTab('query')">Query</button>
+    </div>
+
+    <!-- Equipos Tab -->
+    <div id="tab-equipos" class="ldp-content active">
+      <div class="ldp-search">
+        <input type="text" id="search-equipos" placeholder="Buscar equipo..." onkeyup="filterTable('equipos')">
+        <button class="ldp-export-btn" onclick="exportData('equipos')">📥 CSV</button>
+      </div>
+      <table class="ldp-table" id="table-equipos">
+        <thead>
+          <tr>
+            <th>Equipo</th>
+            <th>Línea</th>
+            <th>Estado</th>
+            <th>Última Revisión</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Cizalla 3A</td><td>Línea 3</td><td><span class="status-badge status-active">ON</span></td><td>2026-06-12 08:00</td></tr>
+          <tr><td>Prensa 3B</td><td>Línea 3</td><td><span class="status-badge status-done">OFF</span></td><td>2026-06-12 06:30</td></tr>
+          <tr><td>Clasificador 3C</td><td>Línea 3</td><td><span class="status-badge status-active">ON</span></td><td>2026-06-12 08:15</td></tr>
+          <tr><td>Horno 1A</td><td>Línea 1</td><td><span class="status-badge status-active">ON</span></td><td>2026-06-12 07:45</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- KPIs Tab -->
+    <div id="tab-kpis" class="ldp-content">
+      <div class="ldp-search">
+        <input type="text" id="search-kpis" placeholder="Buscar KPI...">
+        <button class="ldp-export-btn" onclick="exportData('kpis')">📥 CSV</button>
+      </div>
+      <table class="ldp-table" id="table-kpis">
+        <thead>
+          <tr>
+            <th>KPI</th>
+            <th>Línea</th>
+            <th>Actual</th>
+            <th>Meta</th>
+            <th>Δ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>OEE</strong></td>
+            <td>L3</td>
+            <td>71,2%</td>
+            <td>82,0%</td>
+            <td style="color: #EA7600; font-weight: 700;">▼ -10,8pp</td>
+          </tr>
+          <tr>
+            <td><strong>Disponibilidad</strong></td>
+            <td>L3</td>
+            <td>85,3%</td>
+            <td>90,0%</td>
+            <td style="color: #EA7600; font-weight: 700;">▼ -4,7pp</td>
+          </tr>
+          <tr>
+            <td><strong>Rendimiento</strong></td>
+            <td>L3</td>
+            <td>78,9%</td>
+            <td>85,0%</td>
+            <td style="color: #EA7600; font-weight: 700;">▼ -6,1pp</td>
+          </tr>
+          <tr>
+            <td><strong>Calidad</strong></td>
+            <td>L3</td>
+            <td>96,4%</td>
+            <td>98,0%</td>
+            <td style="color: #EA7600; font-weight: 700;">▼ -1,6pp</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pérdidas Tab -->
+    <div id="tab-perdidas" class="ldp-content">
+      <div class="ldp-search">
+        <input type="text" id="search-perdidas" placeholder="Buscar pérdida...">
+        <button class="ldp-export-btn" onclick="exportData('perdidas')">📥 CSV</button>
+      </div>
+      <table class="ldp-table" id="table-perdidas">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Línea</th>
+            <th>Horas</th>
+            <th>% Total</th>
+            <th>Turno</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Parada No Plan.</strong></td>
+            <td>L3</td>
+            <td>198 h</td>
+            <td>40,7%</td>
+            <td>Noche (63%)</td>
+          </tr>
+          <tr>
+            <td><strong>Ajuste Velocidad</strong></td>
+            <td>L3</td>
+            <td>143 h</td>
+            <td>29,4%</td>
+            <td>Mañana (51%)</td>
+          </tr>
+          <tr>
+            <td><strong>Rechazo Calidad</strong></td>
+            <td>L3</td>
+            <td>89 h</td>
+            <td>18,3%</td>
+            <td>Todos (parejo)</td>
+          </tr>
+          <tr>
+            <td><strong>Otros</strong></td>
+            <td>L3</td>
+            <td>57 h</td>
+            <td>11,6%</td>
+            <td>Tarde (40%)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Acciones Tab -->
+    <div id="tab-acciones" class="ldp-content">
+      <div class="ldp-search">
+        <input type="text" id="search-acciones" placeholder="Buscar acción...">
+        <button class="ldp-export-btn" onclick="exportData('acciones')">📥 CSV</button>
+      </div>
+
+      <!-- Mini Gantt -->
+      <div class="mini-gantt">
+        <div class="gantt-row">
+          <div class="gantt-bar gantt-bar-active" style="width: 80%;"></div>
+          <div class="gantt-label">GEMBA Noche (4d/5)</div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-bar gantt-bar-pending" style="width: 40%;"></div>
+          <div class="gantt-label">Kaizen Turno (2d/5)</div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-bar gantt-bar-pending" style="width: 0%;"></div>
+          <div class="gantt-label">A3 Causa Raíz (0d/3)</div>
+        </div>
+      </div>
+
+      <table class="ldp-table" id="table-acciones">
+        <thead>
+          <tr>
+            <th>Acción</th>
+            <th>Responsable</th>
+            <th>Plazo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>GEMBA Turno Noche</strong></td>
+            <td>EO</td>
+            <td>2026-06-15</td>
+            <td><span class="status-badge status-active">EN CURSO</span></td>
+          </tr>
+          <tr>
+            <td><strong>Kaizen Taller</strong></td>
+            <td>EO/TD</td>
+            <td>2026-06-20</td>
+            <td><span class="status-badge status-pending">PENDIENTE</span></td>
+          </tr>
+          <tr>
+            <td><strong>A3 Causa Raíz</strong></td>
+            <td>IA</td>
+            <td>2026-06-25</td>
+            <td><span class="status-badge status-pending">PENDIENTE</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Query Builder Tab -->
+    <div id="tab-query" class="ldp-content">
+      <div style="padding: 12px;">
+        <label style="font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 6px;">SQL Query</label>
+        <textarea id="sql-input" style="width: 100%; height: 80px; padding: 8px; border: 1px solid #e0dbd4; border-radius: 6px; font-family: monospace; font-size: 0.75rem;" placeholder="SELECT * FROM perdidas WHERE fecha >= DATE('now', '-7 days')"></textarea>
+        <button class="ldp-export-btn" style="margin-top: 8px; width: 100%; padding: 8px;" onclick="executeQuery()">Ejecutar</button>
+        <div id="query-results" style="margin-top: 12px; font-size: 0.75rem; color: #999;"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ============================================================================
+// MOCK DATA & STATE
+// ============================================================================
+
+const messages = [
+  {
+    id: 1,
+    agent: 'user',
+    sender: 'Luciano',
+    avatar: 'LV',
+    time: '14:32',
+    summary: 'Necesito un diagnóstico del OEE de la Línea 3 en el último trimestre. Hay quejas del jefe de planta por paradas recurrentes en el turno noche.',
+    detail: null
+  },
+  {
+    id: 2,
+    agent: 'orquestador',
+    sender: 'Orquestador',
+    avatar: 'MC',
+    time: '14:32',
+    summary: 'Diagnóstico activado. Delegando en paralelo análisis de pérdidas, patrones históricos y detección de anomalías.',
+    detail: null,
+    isTyping: false
+  },
+  {
+    id: 3,
+    agent: 'eo',
+    sender: 'Excelencia Operacional',
+    avatar: 'EO',
+    time: '14:33',
+    summary: 'Análisis de pérdidas Q1 2026: OEE 71,2% vs meta 82,0%. Paradas concentradas 63% en turno noche.',
+    detail: {
+      html: `
+        <div style="margin-top: 12px;">
+          <strong>KPIs Línea 3 Q1 2026:</strong>
+          <div class="kpi-row">
+            <div class="kpi-chip"><div class="val">71,2%</div><div class="lbl">OEE Actual</div><div class="delta">▼ vs meta 82,0%</div></div>
+            <div class="kpi-chip"><div class="val">487 h</div><div class="lbl">Pérdidas Q1</div><div class="delta">▲ +23% vs Q4</div></div>
+            <div class="kpi-chip"><div class="val">63%</div><div class="lbl">Concentración Noche</div></div>
+          </div>
+          <div class="artifact artifact-table">
+            <table>
+              <thead>
+                <tr><th>Tipo Pérdida</th><th>Horas</th><th>% del Total</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Parada No Planificada</td><td>198 h</td><td>40,7%</td></tr>
+                <tr><td>Ajuste de Velocidad</td><td>143 h</td><td>29,4%</td></tr>
+                <tr><td>Rechazo de Calidad</td><td>89 h</td><td>18,3%</td></tr>
+                <tr><td>Otros</td><td>57 h</td><td>11,6%</td></tr>
+              </tbody>
+            </table>
+            <div class="artifact-footer">
+              <a onclick="copyToInput('Crear A3 de causa raíz para paradas turno noche')">+ Crear A3</a>
+              <span>Fuente: arauco_mc.db → perdidas (Q1 2026)</span>
+            </div>
+          </div>
+          <p style="margin-top: 12px; font-size: 0.85rem;"><strong>Hipótesis:</strong> Déficit de mantenimiento preventivo o cambio de turno sin traspaso estándar en turno noche. Requiere GEMBA para confirmar.</p>
+          <div class="evidence-badge" onclick="alert('Evidencia: arauco_mc.db, tabla perdidas, Q1 2026')">📎 arauco_mc.db</div>
+        </div>
+      `
+    }
+  },
+  {
+    id: 4,
+    agent: 'orquestador',
+    sender: 'Orquestador',
+    avatar: 'MC',
+    time: '14:35',
+    summary: 'Síntesis Ejecutiva: OEE 71,2% vs meta 82,0%. Recomendación: GEMBA en turno noche + auditoría de traspaso. ¿Activo a EO para diseñar A3?',
+    detail: {
+      html: `
+        <div style="margin-top: 12px;">
+          <p><strong>Situación:</strong> OEE Línea 3 en 71,2% (meta 82,0%) — brecha de 10,8 pp equivalente a ~120 ton/mes no producidas.</p>
+          <p style="margin-top: 10px;"><strong>Hallazgo Clave:</strong> 63% de las pérdidas ocurren en turno noche. Paradas no planificadas representan 40,7% del total.</p>
+          <p style="margin-top: 10px;"><strong>Recomendación:</strong> GEMBA urgente en turno noche + auditoría de traspaso de turno. Activar Kaizen focalizado si se confirma déficit de estándar.</p>
+          <div class="evidence-badge" onclick="alert('Síntesis basada en análisis EO + datos históricos de arauco_mc.db')">📎 análisis integrado</div>
+        </div>
+      `
+    }
+  }
+];
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
+function init() {
+  renderTimeline();
+  setupKeyboardShortcuts();
+}
+
+// ============================================================================
+// RENDER TIMELINE
+// ============================================================================
+
+function renderTimeline() {
+  const timeline = document.getElementById('timeline');
+  timeline.innerHTML = '';
+
+  messages.forEach(msg => {
+    const card = document.createElement('div');
+    card.className = `chat-card ${msg.agent === 'user' ? 'user' : 'ai'}`;
+    card.id = `msg-${msg.id}`;
+
+    const avatarClass = getAvatarClass(msg.agent);
+    const agentTag = getAgentTag(msg.agent);
+    const hasDetail = msg.detail !== null;
+
+    card.innerHTML = `
+      <div class="chat-card-avatar ${avatarClass}">${msg.avatar}</div>
+      <div class="chat-card-body">
+        <div class="chat-card-sender">${msg.sender}</div>
+        <div class="chat-card-bubble" ${hasDetail ? `onclick="toggleCardExpand(${msg.id})"` : ''} style="${hasDetail ? 'cursor: pointer;' : ''}">
+          ${agentTag ? `<span class="${agentTag}"></span><br>` : ''}
+          ${msg.summary}
+          ${hasDetail ? `<span class="expand-toggle" style="display: inline-block;">▼</span>` : ''}
+        </div>
+        ${hasDetail ? `<div class="chat-card-detail">${msg.detail.html}</div>` : ''}
+        <div class="chat-card-time">${msg.time}</div>
+      </div>
+    `;
+
+    timeline.appendChild(card);
+  });
+
+  timeline.scrollTop = timeline.scrollHeight;
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+function getAvatarClass(agent) {
+  const classes = {
+    'user': 'avatar-user',
+    'orquestador': 'avatar-orq',
+    'eo': 'avatar-eo',
+    'ia': 'avatar-ia',
+    'td': 'avatar-td',
+    'da': 'avatar-da'
+  };
+  return classes[agent] || 'avatar-orq';
+}
+
+function getAgentTag(agent) {
+  const tags = {
+    'orquestador': 'agent-tag tag-orq',
+    'eo': 'agent-tag tag-eo',
+    'ia': 'agent-tag tag-ia',
+    'td': 'agent-tag tag-td',
+    'da': 'agent-tag tag-da'
+  };
+  return tags[agent] ? `<span class="${tags[agent]}"></span>` : '';
+}
+
+function toggleCardExpand(msgId) {
+  const card = document.getElementById(`msg-${msgId}`);
+  card.classList.toggle('expanded');
+}
+
+function autoResizeTextarea(textarea) {
+  textarea.style.height = 'auto';
+  textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+}
+
+function insertHint(text) {
+  const ta = document.getElementById('input');
+  ta.value = text;
+  ta.focus();
+  autoResizeTextarea(ta);
+}
+
+function sendMessage() {
+  const ta = document.getElementById('input');
+  const text = ta.value.trim();
+  if (!text) return;
+
+  // Add user message
+  const msgId = messages.length + 1;
+  messages.push({
+    id: msgId,
+    agent: 'user',
+    sender: 'Luciano',
+    avatar: 'LV',
+    time: new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }),
+    summary: text,
+    detail: null
+  });
+
+  renderTimeline();
+  ta.value = '';
+  autoResizeTextarea(ta);
+
+  // Simulate response after delay
+  setTimeout(() => {
+    messages.push({
+      id: msgId + 1,
+      agent: 'orquestador',
+      sender: 'Orquestador',
+      avatar: 'MC',
+      time: new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }),
+      summary: `Procesando: "${text.substring(0, 60)}${text.length > 60 ? '...' : ''}" — En producción se conectaría a Railway + Claude API + arauco_mc.db.`,
+      detail: null
+    });
+    renderTimeline();
+  }, 1500);
+}
+
+function copyToInput(text) {
+  const ta = document.getElementById('input');
+  ta.value = text;
+  ta.focus();
+  autoResizeTextarea(ta);
+}
+
+// ============================================================================
+// LIVE DATA PANEL FUNCTIONS
+// ============================================================================
+
+function switchLDPTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('.ldp-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  document.querySelectorAll('.ldp-tab').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  // Show selected tab
+  const tab = document.getElementById(`tab-${tabName}`);
+  if (tab) tab.classList.add('active');
+
+  // Highlight button
+  event.target.classList.add('active');
+}
+
+function filterTable(tabName) {
+  const searchInput = document.getElementById(`search-${tabName}`);
+  const table = document.getElementById(`table-${tabName}`);
+  const filter = searchInput.value.toUpperCase();
+  const rows = table.querySelectorAll('tbody tr');
+
+  rows.forEach(row => {
+    const text = row.textContent.toUpperCase();
+    row.style.display = text.includes(filter) ? '' : 'none';
+  });
+}
+
+function exportData(tabName) {
+  const table = document.getElementById(`table-${tabName}`);
+  let csv = [];
+
+  // Header
+  const headers = [];
+  table.querySelectorAll('th').forEach(th => {
+    headers.push(th.textContent.trim());
+  });
+  csv.push(headers.join(','));
+
+  // Rows
+  table.querySelectorAll('tbody tr').forEach(tr => {
+    const cells = [];
+    tr.querySelectorAll('td').forEach(td => {
+      cells.push(`"${td.textContent.trim()}"`);
+    });
+    csv.push(cells.join(','));
+  });
+
+  // Download
+  const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${tabName}-arauco-mc-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+function executeQuery() {
+  const sql = document.getElementById('sql-input').value;
+  const resultsDiv = document.getElementById('query-results');
+
+  if (!sql.trim()) {
+    resultsDiv.innerHTML = 'Ingresa una consulta SQL válida.';
+    return;
+  }
+
+  resultsDiv.innerHTML = `<em>Ejecutando: ${sql.substring(0, 60)}...</em><br><br>En producción se ejecutaría en <code>arauco_mc.db</code> con validación y autenticación. <strong>Mock:</strong> respuesta simulada de 4 filas.`;
+}
+
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', (e) => {
+    // Ctrl/Cmd + / para focus en búsqueda
+    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+      e.preventDefault();
+      document.getElementById('search-equipos').focus();
+    }
+  });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
